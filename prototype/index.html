@@ -1,0 +1,1302 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Little Yard</title>
+<meta name="description" content="Лендинг-прототип Little Yard — четыре загородных дома для жизни в своём ритме. Концепция «Тихий дом».">
+
+<!-- SEO -->
+<link rel="canonical" href="https://little-yard.example/">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Little Yard">
+<meta property="og:title" content="Little Yard — ваши дни за городом">
+<meta property="og:description" content="Отдельный дом для жизни в своём ритме. Четыре загородных дома с оптоволоконным интернетом, территорией и условиями для удалённой работы.">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LodgingBusiness",
+  "name": "Little Yard",
+  "description": "Четыре отдельных загородных дома для посуточной и недельной аренды. Оптоволоконный интернет, огороженная территория, скидка 30% в будни.",
+  "priceRange": "уточняется",
+  "amenityFeature": [
+    { "@type": "LocationFeatureSpecification", "name": "Оптоволоконный интернет", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Парковка 3 места у каждого дома", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Огороженная территория с видеонаблюдением", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Детская площадка", "value": true }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Можно ли приехать с животным?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Да, по предварительному согласованию — подходит не каждая порода и размер. Отметьте это при бронировании или напишите менеджеру заранее." }
+    },
+    {
+      "@type": "Question",
+      "name": "Какой интернет в домах?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Во всех домах проведён оптоволоконный интернет — он не зависит от погоды и мобильной сети, этого достаточно для видеозвонков и удалённой работы." }
+    },
+    {
+      "@type": "Question",
+      "name": "Во сколько заезд и выезд?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Заезд — с 17:00, выезд — до 12:00. Уборка в доме происходит каждые три дня и дополнительно по запросу." }
+    },
+    {
+      "@type": "Question",
+      "name": "Есть ли скидка на будние дни?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Да, при заезде с понедельника по пятницу действует скидка около 30% от стандартной цены." }
+    }
+  ]
+}
+</script>
+
+<style>
+  /* ============================================================
+     LITTLE YARD — концепция «Тихий дом»
+     Layout: текучий широкий холст без фиксированной узкой сетки —
+     внешние поля масштабируются clamp()'ом, карточные сетки растут
+     по auto-fit, фотографии могут идти в разлив (full-bleed).
+     ============================================================ */
+  :root{
+    --bg:        #FAF6F0; /* тёплый почти-белый, как бумага */
+    --surface:   #F3ECE2; /* карточки, попапы */
+    --surface-2: #EDE3D5; /* более глубокая тёплая подложка */
+    --ink:       #2B2620; /* текст основной */
+    --ink-soft:  #6B6153; /* текст второстепенный */
+    --line:      #DED2C0; /* волосяная обводка */
+    --accent:    #B5633B; /* терракота — кнопки, акценты */
+    --accent-ink:#FFFFFF;
+    --accent-2:  #7C8A6B; /* шалфей — метки вроде «с проектором» */
+    --focus:     #8A4A2B;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:        #221C16;
+      --surface:   #2B2319;
+      --surface-2: #332A1E;
+      --ink:       #F1E7D8;
+      --ink-soft:  #BDAF9B;
+      --line:      #43392A;
+      --accent:    #D3815A;
+      --accent-ink:#241A12;
+      --accent-2:  #93A17F;
+      --focus:     #E3A97E;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:        #221C16;
+    --surface:   #2B2319;
+    --surface-2: #332A1E;
+    --ink:       #F1E7D8;
+    --ink-soft:  #BDAF9B;
+    --line:      #43392A;
+    --accent:    #D3815A;
+    --accent-ink:#241A12;
+    --accent-2:  #93A17F;
+    --focus:     #E3A97E;
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Golos Text","PT Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding-left:max(0px, env(safe-area-inset-left,0px));
+    padding-right:max(0px, env(safe-area-inset-right,0px));
+  }
+
+  img{ max-width:100%; display:block; }
+  [hidden]{ display:none!important; }
+  a{ color:inherit; }
+  h1,h2,h3,h4{ font-weight:400; margin:0; text-wrap:balance; }
+  p{ margin:0; }
+  button{ font-family:inherit; }
+
+  :focus-visible{ outline:2px solid var(--focus); outline-offset:3px; border-radius:4px; }
+
+  /* ---------- layout primitives ---------- */
+  .wrap{
+    width:100%;
+    max-width:2200px;
+    margin-inline:auto;
+    padding-inline: clamp(1.25rem, 4vw, 5rem);
+  }
+  .band{ padding-block: clamp(3.5rem, 8vw, 7rem); }
+  .band + .band{ border-top:1px solid var(--line); }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:.5em;
+    font-size:.8rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin-block-end:.9em;
+  }
+  .icon{ width:1em; height:1em; fill:currentColor; stroke:none; flex:none; }
+  .icon-lg{ width:1.6rem; height:1.6rem; }
+
+  h2.title{
+    font-size:clamp(1.9rem, 3.4vw, 3rem);
+    font-weight:300;
+    letter-spacing:-.01em;
+    max-width:24ch;
+  }
+  .lede{
+    font-size:clamp(1.05rem, 1.3vw, 1.25rem);
+    color:var(--ink-soft);
+    max-width:58ch;
+    margin-block-start:1em;
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:.6em;
+    padding:.85em 1.5em;
+    border-radius:7px;
+    border:1px solid transparent;
+    font-size:1rem;
+    cursor:pointer;
+    text-decoration:none;
+    transition:transform .25s ease, background .25s ease, border-color .25s ease;
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn-primary{ background:var(--accent); color:var(--accent-ink); }
+  .btn-primary:hover{ background:var(--focus); }
+  .btn-ghost{ background:transparent; border-color:var(--line); color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-sm{ padding:.6em 1.1em; font-size:.92rem; }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+  }
+
+  /* ---------- header ---------- */
+  /* Плавает поверх фото hero в начале страницы (тёмная полупрозрачная таблетка,
+     как попросил заказчик по референсу), становится обычной сплошной шапкой
+     после того, как hero прокручен — см. JS-порог ниже. */
+  header[data-header]{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    transition:background .3s ease, backdrop-filter .3s ease, border-color .3s ease;
+    background:transparent; border-bottom:1px solid transparent;
+  }
+  header[data-header].scrolled{
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:blur(10px);
+    border-color:var(--line);
+  }
+  .header-row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:1.5rem; padding:1.1rem 0;
+    transition:background .3s ease, border-radius .3s ease, padding .3s ease, margin .3s ease, box-shadow .3s ease;
+  }
+  header[data-header]:not(.scrolled) .header-row{
+    margin-block-start:clamp(.7rem,2vw,1.3rem);
+    background:rgba(20,14,8,.55); backdrop-filter:blur(10px);
+    border-radius:999px; padding:1rem 1.5rem;
+    box-shadow:0 14px 34px -18px rgba(0,0,0,.45);
+  }
+  .brand{ font-size:1.25rem; letter-spacing:.01em; font-weight:500; white-space:nowrap; }
+  header[data-header]:not(.scrolled) .brand{ color:#fff; }
+  nav.primary-nav{ display:flex; gap:clamp(1rem,2vw,2.2rem); flex-wrap:wrap; }
+  nav.primary-nav a{
+    text-decoration:none; font-size:.98rem; color:var(--ink-soft);
+    padding-block:.3em; border-bottom:1px solid transparent;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  nav.primary-nav a:hover{ color:var(--ink); border-color:var(--accent); }
+  @media (min-width: 881px){
+    /* белый текст навигации поверх фото — только пока шапка плавает над hero на десктопе;
+       на мобильном меню открывается во весь экран на сплошном фоне, там нужен обычный цвет (см. ниже) */
+    header[data-header]:not(.scrolled) nav.primary-nav a{ color:rgba(255,255,255,.85); }
+    header[data-header]:not(.scrolled) nav.primary-nav a:hover{ color:#fff; border-color:rgba(255,255,255,.85); }
+  }
+  .header-actions{ display:flex; align-items:center; gap:.75rem; }
+  .nav-toggle{
+    display:none; background:none; border:1px solid var(--line); border-radius:7px;
+    padding:.5em; cursor:pointer; color:var(--ink);
+  }
+  header[data-header]:not(.scrolled) .nav-toggle{ border-color:rgba(255,255,255,.5); color:#fff; }
+  @media (max-width: 880px){
+    nav.primary-nav{
+      position:fixed; inset:0; top:var(--mobile-header-h, 4.5rem); background:var(--bg);
+      flex-direction:column; padding:2rem clamp(1.25rem,4vw,5rem);
+      gap:1.25rem; transform:translateY(-8px); opacity:0; pointer-events:none;
+      transition:opacity .25s ease, transform .25s ease;
+    }
+    nav.primary-nav[data-open]{ opacity:1; transform:none; pointer-events:auto; }
+    nav.primary-nav a{ font-size:1.35rem; font-weight:500; color:var(--ink); }
+    nav.primary-nav a:hover{ color:var(--accent); }
+    /* .header-row носит backdrop-filter (плавающая "таблетка"), а filter/backdrop-filter создаёт
+       свой containing block для position:fixed-потомков — без этого сброса меню "fixed;inset:0"
+       позиционировалось бы не от экрана, а от маленькой таблетки шапки (бага со скрина).
+       Класс .nav-open ставится/снимается в JS (а не :has(), у которого не везде есть поддержка
+       в мобильных webview), чтобы сброс blur работал гарантированно на любом устройстве. */
+    header[data-header].nav-open .header-row{ backdrop-filter:none; background:var(--bg); }
+    header[data-header].nav-open.scrolled{ backdrop-filter:none; }
+    .header-actions .btn-primary span{ display:none; }
+    .header-actions .btn-primary.btn-sm{ padding:.6em; }
+    .nav-toggle{ display:inline-flex; }
+  }
+
+  /* ---------- hero (полноэкранное фото, текст поверх снизу слева — по референсу заказчика) ---------- */
+  .hero{ position:relative; }
+  .hero-photo{ position:relative; width:100%; aspect-ratio:16/9; min-height:560px; overflow:hidden; }
+  @media (max-width:760px){ .hero-photo{ aspect-ratio:3/4; min-height:680px; } }
+  .hero-photo > img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .hero-scrim{
+    position:absolute; inset:0; pointer-events:none;
+    background:
+      linear-gradient(to top, rgba(20,14,8,.78) 0%, rgba(20,14,8,.16) 42%, transparent 62%),
+      linear-gradient(to bottom, rgba(20,14,8,.5) 0%, transparent 26%);
+  }
+  .hero-copy{ position:absolute; left:0; right:0; bottom:clamp(1.6rem,4vw,3.2rem); color:#fff; }
+  .hero h1{
+    font-size:clamp(2.4rem, 5vw, 4.6rem);
+    font-weight:300; letter-spacing:-.02em; line-height:1.05;
+    text-shadow:0 1px 3px rgba(0,0,0,.55), 0 4px 18px rgba(0,0,0,.35);
+  }
+  .hero-desc{
+    font-size:clamp(1.02rem,1.2vw,1.18rem); color:rgba(255,255,255,.92); max-width:46ch; margin-block-start:.8em;
+    text-shadow:0 1px 3px rgba(0,0,0,.6), 0 2px 12px rgba(0,0,0,.4);
+  }
+  .quick-facts{ display:flex; flex-wrap:wrap; gap:.6rem; margin-block:1.5em; }
+  .chip{
+    display:inline-flex; align-items:center; gap:.5em;
+    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.4);
+    border-radius:999px; padding:.5em 1em; font-size:.92rem; color:#fff;
+    backdrop-filter:blur(6px);
+  }
+  .chip .icon{ color:#fff; width:1.1em; height:1.1em; }
+  .hero-actions{ display:flex; gap:1rem; flex-wrap:wrap; margin-block-start:.3em; }
+  .hero .btn-ghost{ border-color:rgba(255,255,255,.55); color:#fff; }
+  .hero .btn-ghost:hover{ background:rgba(255,255,255,.12); border-color:#fff; }
+  /* на главном экране кнопки и чипы — единый стиль скругления (как у плавающей шапки) */
+  .hero .btn{ border-radius:999px; }
+  @media (max-width:760px){
+    /* запас сверху, чтобы текст героя не упирался в плавающую шапку на коротких экранах */
+    .hero-copy{ top:5.5rem; }
+    .quick-facts{ margin-block:1.1em; }
+    /* когда текст подняли (см. выше), описание попадает в зону между верхним и нижним
+       градиентами скрима, где оба почти прозрачны — там на светлом участке фото белый текст
+       не виден. На мобильном вместо двух градиентов с "дырой" — один сплошной, без разрыва. */
+    .hero-scrim{
+      background:linear-gradient(to top,
+        rgba(20,14,8,.82) 0%, rgba(20,14,8,.58) 30%, rgba(20,14,8,.42) 48%,
+        rgba(20,14,8,.42) 62%, rgba(20,14,8,.6) 78%, rgba(20,14,8,.78) 100%);
+    }
+  }
+
+  /* ---------- reveal ---------- */
+  .reveal{ opacity:1; }
+  html.gsap-on .reveal{ opacity:0; }
+
+  /* ---------- intro ---------- */
+  .intro-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:clamp(2rem,5vw,5rem); align-items:center; }
+  @media (max-width:880px){ .intro-grid{ grid-template-columns:1fr; } }
+  .diagram{
+    border:1px solid var(--line); border-radius:8px; background:var(--surface);
+    padding:clamp(1.5rem,3vw,2.5rem); aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+  }
+  .intro-mosaic{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; border-radius:10px; overflow:hidden; aspect-ratio:4/3; }
+  .intro-mosaic .m-item{ position:relative; overflow:hidden; }
+  .intro-mosaic .m-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .intro-mosaic .m-item span{ position:absolute; inset:auto auto .6rem .6rem; font-size:.72rem; background:color-mix(in srgb, var(--ink) 78%, transparent); color:var(--bg); padding:.28em .8em; border-radius:999px; }
+
+  /* ---------- houses ---------- */
+  .houses-grid{
+    display:grid; gap:1.5rem; margin-block-start:2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .house-card{ overflow:hidden; display:flex; flex-direction:column; }
+  .house-photo{
+    aspect-ratio:4/3; position:relative;
+    background:linear-gradient(135deg, var(--surface-2), color-mix(in srgb, var(--accent-2) 20%, var(--surface)));
+  }
+  .house-photo .ph-label{ position:absolute; inset:auto auto .8rem .8rem; font-size:.74rem; background:color-mix(in srgb, var(--ink) 75%, transparent); color:var(--bg); padding:.3em .7em; border-radius:999px; }
+  .house-body{ padding:1.4rem; display:flex; flex-direction:column; gap:.7rem; flex:1; }
+  .house-name{ font-size:1.2rem; }
+  .house-meta{ display:flex; flex-wrap:wrap; gap:.5em; font-size:.85rem; color:var(--ink-soft); }
+  .house-meta span{ display:inline-flex; align-items:center; gap:.35em; }
+  .house-meta .icon{ width:1em; height:1em; }
+  .house-price{ margin-block-start:auto; display:flex; align-items:baseline; justify-content:space-between; gap:1rem; padding-block-start:.8rem; border-top:1px solid var(--line); }
+  .house-price b{ font-size:1.15rem; font-weight:500; }
+  .house-price small{ color:var(--ink-soft); font-weight:400; }
+  .house-cta{ width:100%; justify-content:center; }
+
+  /* ---------- weekdays ---------- */
+  .weekday-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(2rem,5vw,5rem); align-items:center; }
+  @media (max-width:880px){ .weekday-grid{ grid-template-columns:1fr; } }
+  .stat-row{ display:flex; gap:clamp(1.5rem,4vw,3.5rem); flex-wrap:wrap; margin-block-start:1.8rem; }
+  .stat b{ font-size:clamp(2.2rem,4vw,3.2rem); font-weight:300; color:var(--accent); display:block; }
+  .stat span{ color:var(--ink-soft); font-size:.92rem; }
+  .weekday-card{ padding:clamp(1.6rem,3vw,2.5rem); }
+  .weekday-card ul{ list-style:none; margin:1.2em 0 0; padding:0; display:grid; gap:.9em; }
+  .weekday-card li{ display:flex; gap:.8em; align-items:flex-start; }
+  .weekday-card .icon{ color:var(--accent-2); margin-block-start:.2em; }
+
+  /* ---------- territory / kids+pets ---------- */
+  .feature-grid{
+    display:grid; gap:1.25rem; margin-block-start:2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+  .feature{ padding:1.5rem; display:flex; flex-direction:column; gap:.75rem; }
+  .feature .icon-wrap{
+    width:2.6rem; height:2.6rem; border-radius:8px; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; color:var(--accent);
+  }
+  .feature h3{ font-size:1.05rem; font-weight:500; }
+  .feature p{ color:var(--ink-soft); font-size:.94rem; }
+
+  /* блок "Территория": заголовок+текст+карточки слева, фото во весь рост справа (от самого заголовка) */
+  .territory-layout{
+    display:grid; grid-template-columns:1.6fr 1fr; gap:1.25rem; align-items:stretch;
+  }
+  .territory-text{ display:flex; flex-direction:column; }
+  .territory-layout .feature-grid{ margin-block-start:2.5rem; grid-template-columns:repeat(2, 1fr); }
+  /* иконка+заголовок первой колонки карточек — вровень с левым краем текста выше, без внутреннего отступа карточки */
+  .territory-layout .feature-grid .feature:nth-child(odd){ padding-inline-start:0; }
+  @media (max-width:980px){
+    .territory-layout{ grid-template-columns:1fr; }
+    .territory-layout .feature-grid{ grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); }
+    .territory-layout .feature-grid .feature:nth-child(odd){ padding-inline-start:1.5rem; }
+  }
+  .territory-photo{
+    position:relative; margin:0; border-radius:10px; overflow:hidden; min-height:320px;
+  }
+  .territory-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* блок "Дети и питомцы": та же сетка в 2 колонки, что и в "Территории" */
+  .territory-text .feature-list{ margin-block-start:2.5rem; display:grid; grid-template-columns:repeat(2, 1fr); gap:1.75rem 1.25rem; }
+  .territory-text .feature-list .feature{ padding:0; }
+  @media (max-width:560px){
+    .territory-text .feature-list{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- map ---------- */
+  .map-wrap{
+    position:relative; border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    background:var(--surface); aspect-ratio: 16/9; margin-block-start:2.5rem;
+  }
+  .map-photo{ width:100%; height:100%; object-fit:cover; display:block; }
+  .map-tone{ position:absolute; inset:0; background:linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, transparent) 0%, color-mix(in srgb, var(--surface) 55%, transparent) 55%, color-mix(in srgb, var(--accent-2) 20%, transparent) 100%); mix-blend-mode:multiply; pointer-events:none; }
+  .map-tone::after{ content:""; position:absolute; inset:0; background:var(--bg); opacity:.08; }
+  .map-svg{ width:100%; height:100%; display:block; }
+  .map-marker{ transform-origin:center; opacity:1; }
+  html.gsap-on .map-marker{ opacity:0; transform:translateY(10px) scale(.7); }
+  .map-pin-anchor{ position:absolute; transform:translate(-50%,-100%); }
+  .map-pin{ display:flex; flex-direction:column; align-items:center; gap:.4rem; filter:drop-shadow(0 2px 6px rgba(20,14,6,.35)); }
+  .map-pin .pin-dot{ width:1.9rem; height:1.9rem; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:500; border:2px solid var(--bg); }
+  .map-pin.pin-alt .pin-dot{ background:var(--accent-2); width:1rem; height:1rem; }
+  .map-pin .pin-label{ font-size:.76rem; white-space:nowrap; background:color-mix(in srgb, var(--ink) 78%, transparent); color:var(--bg); padding:.25em .7em; border-radius:999px; }
+  .map-legend{ display:flex; flex-wrap:wrap; gap:1rem 1.6rem; margin-block-start:1.2rem; font-size:.88rem; color:var(--ink-soft); }
+  .map-legend span{ display:inline-flex; align-items:center; gap:.5em; }
+  .legend-dot{ width:.65em; height:.65em; border-radius:50%; background:var(--accent); display:inline-block; }
+  .legend-dot.alt{ background:var(--accent-2); }
+
+  /* ---------- nearby ---------- */
+  .route-card{ border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:clamp(1.3rem,2.5vw,1.8rem) clamp(1.4rem,3vw,2rem); margin-block-start:1.6rem; display:flex; flex-wrap:wrap; align-items:center; gap:1.4rem 2.2rem; }
+  .route-card-row{ display:flex; align-items:flex-start; gap:.8em; flex:1 1 220px; min-width:200px; }
+  .route-card-row .icon{ color:var(--accent); flex-shrink:0; margin-block-start:.1em; }
+  .route-card-row b{ display:block; font-size:1.05rem; font-weight:500; }
+  .route-card-row span{ color:var(--ink-soft); font-size:.86rem; }
+  .route-card-cta{ flex:0 0 auto; }
+  .nearby-list{ list-style:none; margin:2rem 0 0; padding:0; border-top:1px solid var(--line); display:grid; gap:0; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); align-items:start; }
+  .nearby-list li{ display:flex; flex-direction:column; align-items:flex-start; gap:.5rem; padding:1.2rem 0; }
+  .nearby-list b{ font-weight:500; font-size:1.08rem; line-height:1.3; display:flex; align-items:center; gap:.6em; }
+  .nearby-list b .icon{ color:var(--accent); flex-shrink:0; width:1.3em; height:1.3em; }
+  .nearby-list small{ color:var(--ink-soft); font-size:.92rem; white-space:nowrap; }
+
+  /* ---------- prices ---------- */
+  .rules-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,4vw,4rem); margin-block-start:2.5rem; }
+  @media (max-width:760px){ .rules-grid{ grid-template-columns:1fr; } }
+  .rules-grid dl{ display:grid; grid-template-columns:auto 1fr; gap:.8em 1.2em; margin:0; }
+  .rules-grid dt{ color:var(--ink-soft); white-space:nowrap; }
+  .rules-grid dd{ margin:0; }
+  .rules-list{ list-style:none; margin:0; padding:0; display:grid; gap:.9em; }
+  .rules-list li{ display:flex; gap:.7em; align-items:flex-start; }
+  .rules-list .icon{ color:var(--accent); margin-block-start:.2em; }
+
+  /* ---------- faq ---------- */
+  .faq-list{ max-width:70ch; margin-block-start:2rem; display:grid; gap:.75rem; }
+  details.faq-item{ border:1px solid var(--line); border-radius:8px; padding:0; background:var(--surface); }
+  details.faq-item summary{
+    list-style:none; cursor:pointer; padding:1.1em 1.3em; display:flex;
+    justify-content:space-between; align-items:center; gap:1rem; font-size:1.02rem;
+  }
+  details.faq-item summary::-webkit-details-marker{ display:none; }
+  details.faq-item summary .icon{ transition:transform .25s ease; flex:none; }
+  details.faq-item[open] summary .icon{ transform:rotate(180deg); }
+  details.faq-item .faq-a{ padding:0 1.3em 1.2em; color:var(--ink-soft); }
+
+  /* ---------- booking ---------- */
+  .booking-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,4vw,4rem); margin-block-start:2rem; align-items:start; }
+  @media (max-width:880px){ .booking-grid{ grid-template-columns:1fr; } }
+  .booking-calc{ padding:clamp(1.6rem,3vw,2.2rem); }
+  .calc-row{ display:flex; flex-wrap:wrap; gap:1rem; margin-block-end:1rem; }
+  .calc-row .field{ flex:1 1 160px; min-width:0; }
+  .calc-result{
+    border:1px solid var(--line); border-radius:8px; padding:1.1rem 1.3rem;
+    display:grid; gap:.55em; font-size:.94rem; background:var(--bg);
+  }
+  .calc-result .calc-line{ display:flex; justify-content:space-between; gap:1rem; color:var(--ink-soft); }
+  .calc-result .calc-total{
+    display:flex; justify-content:space-between; gap:1rem; font-size:1.2rem; font-weight:500;
+    color:var(--ink); padding-block-start:.6em; margin-block-start:.2em; border-top:1px solid var(--line);
+  }
+  .calc-result .calc-error{ color:var(--accent); }
+  form.contact-form{ display:grid; gap:1rem; }
+  /* кнопка отправки — своя естественная ширина, а не растянутая по сетке формы */
+  form.contact-form button[type="submit"]{ justify-self:start; }
+  .field{ display:grid; gap:.4em; }
+  .field label{ font-size:.88rem; color:var(--ink-soft); }
+  .field input, .field textarea, .field select{
+    font:inherit; padding:.8em 1em; border-radius:7px; border:1px solid var(--line);
+    background:var(--bg); color:var(--ink); width:100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{ border-color:var(--accent); }
+  .checkbox-row{ display:flex; align-items:center; gap:.6em; font-size:.94rem; }
+  .checkbox-row input{ width:1.1em; height:1.1em; }
+  .form-note{ font-size:.82rem; color:var(--ink-soft); }
+  .form-success{ display:flex; align-items:center; gap:.6em; color:var(--accent-2); font-size:.98rem; }
+
+  /* ---------- footer ---------- */
+  footer{ padding-block:clamp(2.5rem,5vw,4rem); border-top:1px solid var(--line); }
+  .footer-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:2.5rem; }
+  @media (max-width:980px){ .footer-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .footer-grid{ grid-template-columns:1fr; } }
+  .footer-grid h4{ font-size:.85rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-block-end:1em; }
+  .footer-grid ul{ list-style:none; margin:0; padding:0; display:grid; gap:.6em; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); }
+  .footer-grid a:hover{ color:var(--accent); }
+  .social-list{ display:flex; flex-wrap:wrap; gap:.7rem; }
+  .social-link{
+    width:2.4rem; height:2.4rem; display:inline-flex; align-items:center; justify-content:center;
+    border:1px solid var(--line); border-radius:999px; color:var(--ink-soft); text-decoration:none;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .social-link:hover{ color:var(--accent); border-color:var(--accent); }
+  .social-link .icon{ width:1.15rem; height:1.15rem; }
+  .footer-bottom{
+    margin-block-start:3rem; padding-block-start:1.5rem; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; font-size:.84rem; color:var(--ink-soft);
+  }
+  .footer-legal{ display:flex; flex-wrap:wrap; gap:.4rem 1.3rem; }
+  .legal-link{
+    background:none; border:none; padding:0; margin:0; font:inherit; font-size:.84rem; color:var(--ink-soft);
+    text-decoration:underline; text-underline-offset:3px; cursor:pointer;
+  }
+  .legal-link:hover{ color:var(--accent); }
+
+  /* ---------- legal docs modal ---------- */
+  dialog.legal-dialog{
+    border:none; border-radius:12px; padding:0; max-width:min(720px,92vw); width:100%;
+    max-height:88vh; color:var(--ink); background:var(--bg);
+  }
+  dialog.legal-dialog::backdrop{ background:color-mix(in srgb, var(--ink) 55%, transparent); backdrop-filter:blur(2px); }
+  .legal-scroll{ overflow-y:auto; max-height:88vh; padding:clamp(1.6rem,3vw,2.4rem); }
+  .legal-head{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;
+    margin-block-end:1.3rem; position:sticky; top:calc(-1 * clamp(1.6rem,3vw,2.4rem)); background:var(--bg); padding-block-start:.2rem;
+  }
+  .legal-head h3{ font-size:1.4rem; padding-right:1rem; }
+  .legal-body{ font-size:.95rem; color:var(--ink-soft); display:grid; gap:1em; }
+  .legal-body h4{ color:var(--ink); font-size:1rem; font-weight:500; margin:.3em 0 0; }
+  .legal-body p{ margin:0; }
+
+  /* ---------- modal ---------- */
+  dialog.house-dialog{
+    border:none; border-radius:12px; padding:0; max-width:min(920px,92vw); width:100%;
+    max-height:88vh; color:var(--ink); background:var(--bg);
+  }
+  dialog.house-dialog::backdrop{ background:color-mix(in srgb, var(--ink) 55%, transparent); backdrop-filter:blur(2px); }
+  .dialog-scroll{ overflow-y:auto; max-height:88vh; }
+  .dialog-head{ position:relative; aspect-ratio:16/8; background:linear-gradient(135deg,var(--surface-2),color-mix(in srgb, var(--accent-2) 22%, var(--surface))); }
+  .dialog-close{
+    position:absolute; top:1rem; right:1rem; background:color-mix(in srgb, var(--bg) 85%, transparent);
+    border:1px solid var(--line); border-radius:999px; width:2.4rem; height:2.4rem; display:flex;
+    align-items:center; justify-content:center; cursor:pointer;
+  }
+  .dialog-body{ padding:clamp(1.5rem,3vw,2.5rem); display:grid; gap:1.5rem; }
+  .dialog-top{ display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:baseline; }
+  .dialog-top h3{ font-size:1.6rem; }
+  .dialog-facts{ display:flex; flex-wrap:wrap; gap:.6rem; }
+  .dialog-amenities{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:.7em; list-style:none; margin:0; padding:0; }
+  .dialog-amenities li{ display:flex; gap:.6em; align-items:center; font-size:.94rem; }
+  .dialog-amenities .icon{ color:var(--accent-2); }
+  .dialog-pet{ font-size:.92rem; padding:.9em 1.1em; border-radius:8px; background:var(--surface); border:1px solid var(--line); }
+  .dialog-foot{ display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; padding-block-start:.5rem; border-top:1px solid var(--line); }
+
+  .skip-link{ position:fixed; left:-999px; top:1rem; z-index:100; background:var(--accent); color:var(--accent-ink); padding:.7em 1.2em; border-radius:7px; }
+  .skip-link:focus{ left:1rem; }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<a class="skip-link" href="#main">Перейти к содержанию</a>
+
+<!-- =================== ICON SPRITE (Phosphor, thin) =================== -->
+<svg style="display:none" aria-hidden="true">
+<symbol id="icon-house" viewBox="0 0 256 256"><path d="M216.49,111.51l-80-80a12,12,0,0,0-17,0l-80,80A12,12,0,0,0,36,120v96a4,4,0,0,0,4,4h64a4,4,0,0,0,4-4V156h40v60a4,4,0,0,0,4,4h64a4,4,0,0,0,4-4V120A12,12,0,0,0,216.49,111.51ZM212,212H156V152a4,4,0,0,0-4-4H104a4,4,0,0,0-4,4v60H44V120a4,4,0,0,1,1.17-2.83l80-80a4,4,0,0,1,5.66,0l80,80A4,4,0,0,1,212,120Z"/></symbol>
+<symbol id="icon-wifi-high" viewBox="0 0 256 256"><path d="M136,204a8,8,0,1,1-8-8A8,8,0,0,1,136,204ZM234.54,90.1a168,168,0,0,0-213.08,0,4,4,0,1,0,5.08,6.18,160,160,0,0,1,202.92,0,4,4,0,0,0,5.08-6.18Zm-32.06,35.81a120,120,0,0,0-149,0,4,4,0,0,0,5,6.27,112,112,0,0,1,139,0,4,4,0,0,0,5-6.27Zm-32.13,35.86a72,72,0,0,0-84.7,0,4,4,0,1,0,4.7,6.46,64.07,64.07,0,0,1,75.3,0,4,4,0,0,0,5.58-.87A4,4,0,0,0,170.35,161.77Z"/></symbol>
+<symbol id="icon-bed" viewBox="0 0 256 256"><path d="M216,76H28V48a4,4,0,0,0-8,0V208a4,4,0,0,0,8,0V172H244v36a4,4,0,0,0,8,0V112A36,36,0,0,0,216,76ZM28,84h80v80H28Zm88,80V84H216a28,28,0,0,1,28,28v52Z"/></symbol>
+<symbol id="icon-users" viewBox="0 0 256 256"><path d="M107.19,159a56,56,0,1,0-46.38,0A91.83,91.83,0,0,0,6.88,197.81a4,4,0,1,0,6.7,4.37,84,84,0,0,1,140.84,0,4,4,0,1,0,6.7-4.37A91.83,91.83,0,0,0,107.19,159ZM36,108a48,48,0,1,1,48,48A48.05,48.05,0,0,1,36,108Zm212,95.35a4,4,0,0,1-5.53-1.17A83.81,83.81,0,0,0,172,164a4,4,0,0,1,0-8,48,48,0,1,0-17.82-92.58,4,4,0,1,1-3-7.43,56,56,0,0,1,44,103,91.83,91.83,0,0,1,53.93,38.86A4,4,0,0,1,248,203.35Z"/></symbol>
+<symbol id="icon-paw-print" viewBox="0 0 256 256"><path d="M212,84a24,24,0,1,0,24,24A24,24,0,0,0,212,84Zm0,40a16,16,0,1,1,16-16A16,16,0,0,1,212,124ZM68,108a24,24,0,1,0-24,24A24,24,0,0,0,68,108ZM44,124a16,16,0,1,1,16-16A16,16,0,0,1,44,124ZM92,84A24,24,0,1,0,68,60,24,24,0,0,0,92,84Zm0-40A16,16,0,1,1,76,60,16,16,0,0,1,92,44Zm72,40a24,24,0,1,0-24-24A24,24,0,0,0,164,84Zm0-40a16,16,0,1,1-16,16A16,16,0,0,1,164,44Zm21.18,108.36a39.32,39.32,0,0,1-18.77-23.52,40,40,0,0,0-76.82,0,39.3,39.3,0,0,1-18.73,23.51A36,36,0,0,0,102,217.17a68.14,68.14,0,0,1,51.95,0,36,36,0,0,0,31.23-64.79ZM168,212a27.8,27.8,0,0,1-11-2.23,76.16,76.16,0,0,0-58.11,0A27.72,27.72,0,0,1,88,212a28,28,0,0,1-13.29-52.65,47.23,47.23,0,0,0,22.56-28.29,32,32,0,0,1,61.46,0,47.26,47.26,0,0,0,22.6,28.3A28,28,0,0,1,168,212Z"/></symbol>
+<symbol id="icon-tree" viewBox="0 0 256 256"><path d="M195,65.59a72,72,0,0,0-134,0,67.72,67.72,0,0,0-41,62.22c-.1,36,30.24,67.26,66.25,68.17A68.24,68.24,0,0,0,124,185.66V232a4,4,0,0,0,8,0V185.67A68.09,68.09,0,0,0,168,196l1.72,0c36-.91,66.34-32.13,66.24-68.17A67.73,67.73,0,0,0,195,65.59ZM169.55,188A60.15,60.15,0,0,1,132,176v-45.5l45.79-22.89a4,4,0,1,0-3.58-7.16L132,121.53V88a4,4,0,0,0-8,0v57.53L81.79,124.42a4,4,0,1,0-3.58,7.16L124,154.47V176a60,60,0,0,1-37.55,12c-31.77-.8-58.54-28.35-58.45-60.15a59.77,59.77,0,0,1,37.62-55.5A4,4,0,0,0,67.88,70a64,64,0,0,1,120.24,0,4,4,0,0,0,2.26,2.33A59.79,59.79,0,0,1,228,127.83C228.09,159.63,201.32,187.18,169.55,188Z"/></symbol>
+<symbol id="icon-shield-check" viewBox="0 0 256 256"><path d="M208,44H48A12,12,0,0,0,36,56v56c0,51.16,24.73,82.12,45.47,99.1,22.4,18.32,44.55,24.5,45.48,24.76a4,4,0,0,0,2.1,0c.93-.26,23.08-6.44,45.48-24.76,20.74-17,45.47-47.94,45.47-99.1V56A12,12,0,0,0,208,44Zm4,68c0,38.44-14.23,69.63-42.29,92.71A132.45,132.45,0,0,1,128,227.82a132.23,132.23,0,0,1-41.71-23.11C58.23,181.63,44,150.44,44,112V56a4,4,0,0,1,4-4H208a4,4,0,0,1,4,4Zm-41.17-10.83a4,4,0,0,1,0,5.66l-56,56a4,4,0,0,1-5.66,0l-24-24a4,4,0,0,1,5.66-5.66L112,154.34l53.17-53.17A4,4,0,0,1,170.83,101.17Z"/></symbol>
+<symbol id="icon-car-simple" viewBox="0 0 256 256"><path d="M240,108H226.6L197.77,43.13a12,12,0,0,0-11-7.13H69.2a12,12,0,0,0-11,7.13L29.4,108H16a4,4,0,0,0,0,8H28v84a12,12,0,0,0,12,12H64a12,12,0,0,0,12-12V180H180v20a12,12,0,0,0,12,12h24a12,12,0,0,0,12-12V116h12a4,4,0,0,0,0-8ZM65.54,46.38A4,4,0,0,1,69.2,44H186.8a4,4,0,0,1,3.66,2.38L217.84,108H38.16ZM220,200a4,4,0,0,1-4,4H192a4,4,0,0,1-4-4V176a4,4,0,0,0-4-4H72a4,4,0,0,0-4,4v24a4,4,0,0,1-4,4H40a4,4,0,0,1-4-4V116H220Z"/></symbol>
+<symbol id="icon-wind" viewBox="0 0 256 256"><path d="M180,184a28,28,0,0,1-28,28c-12.09,0-23.76-7.83-27.75-18.61a4,4,0,1,1,7.5-2.78C134.58,198.24,143.28,204,152,204a20,20,0,0,0,0-40H40a4,4,0,0,1,0-8H152A28,28,0,0,1,180,184ZM148,72a28,28,0,0,0-28-28c-12.09,0-23.76,7.83-27.75,18.61a4,4,0,0,0,7.5,2.78C102.58,57.76,111.28,52,120,52a20,20,0,0,1,0,40H24a4,4,0,0,0,0,8h96A28,28,0,0,0,148,72Zm60,4c-12.09,0-23.76,7.83-27.75,18.61a4,4,0,1,0,7.5,2.78C190.58,89.76,199.28,84,208,84a20,20,0,0,1,0,40H32a4,4,0,0,0,0,8H208a28,28,0,0,0,0-56Z"/></symbol>
+<symbol id="icon-baby" viewBox="0 0 256 256"><path d="M92,136a8,8,0,1,1,8-8A8,8,0,0,1,92,136Zm72-16a8,8,0,1,0,8,8A8,8,0,0,0,164,120Zm-10.13,44.62a49,49,0,0,1-51.74,0,4,4,0,0,0-4.26,6.76,57,57,0,0,0,60.26,0,4,4,0,1,0-4.26-6.76ZM228,128A100,100,0,1,1,128,28,100.11,100.11,0,0,1,228,128Zm-8,0a92.11,92.11,0,0,0-90.06-92C116.26,54.07,116,71.83,116,72a12,12,0,0,0,24,0,4,4,0,0,1,8,0,20,20,0,0,1-40,0c0-.78.16-17.31,12-35.64A92,92,0,1,0,220,128Z"/></symbol>
+<symbol id="icon-map-pin" viewBox="0 0 256 256"><path d="M128,68a36,36,0,1,0,36,36A36,36,0,0,0,128,68Zm0,64a28,28,0,1,1,28-28A28,28,0,0,1,128,132Zm0-112a84.09,84.09,0,0,0-84,84c0,30.42,14.17,62.79,41,93.62a250,250,0,0,0,40.73,37.66,4,4,0,0,0,4.58,0A250,250,0,0,0,171,197.62c26.81-30.83,41-63.2,41-93.62A84.09,84.09,0,0,0,128,20Zm37.1,172.23A254.62,254.62,0,0,1,128,227a254.62,254.62,0,0,1-37.1-34.81C73.15,171.8,52,139.9,52,104a76,76,0,0,1,152,0C204,139.9,182.85,171.8,165.1,192.23Z"/></symbol>
+<symbol id="icon-clock" viewBox="0 0 256 256"><path d="M128,28A100,100,0,1,0,228,128,100.11,100.11,0,0,0,128,28Zm0,192a92,92,0,1,1,92-92A92.1,92.1,0,0,1,128,220Zm60-92a4,4,0,0,1-4,4H128a4,4,0,0,1-4-4V72a4,4,0,0,1,8,0v52h52A4,4,0,0,1,188,128Z"/></symbol>
+<symbol id="icon-phone" viewBox="0 0 256 256"><path d="M220.78,162.13,173.56,141A12,12,0,0,0,162.18,142a3.37,3.37,0,0,0-.38.28L137,163.42a3.93,3.93,0,0,1-3.7.21c-16.24-7.84-33.05-24.52-40.89-40.57a3.9,3.9,0,0,1,.18-3.69l21.2-25.21c.1-.12.19-.25.28-.38a12,12,0,0,0,1-11.36L93.9,35.28a12,12,0,0,0-12.48-7.19A52.25,52.25,0,0,0,36,80c0,77.2,62.8,140,140,140a52.25,52.25,0,0,0,51.91-45.42A12,12,0,0,0,220.78,162.13ZM220,173.58A44.23,44.23,0,0,1,176,212C103.22,212,44,152.78,44,80A44.23,44.23,0,0,1,82.42,36a3.87,3.87,0,0,1,.48,0,4,4,0,0,1,3.67,2.49l21.11,47.14a4,4,0,0,1-.23,3.6l-21.19,25.2c-.1.13-.2.25-.29.39a12,12,0,0,0-.78,11.75c8.69,17.79,26.61,35.58,44.6,44.27a12,12,0,0,0,11.79-.87l.37-.28,24.83-21.12a3.93,3.93,0,0,1,3.57-.27l47.21,21.16A4,4,0,0,1,220,173.58Z"/></symbol>
+<symbol id="icon-check" viewBox="0 0 256 256"><path d="M226.83,74.83l-128,128a4,4,0,0,1-5.66,0l-56-56a4,4,0,0,1,5.66-5.66L96,194.34,221.17,69.17a4,4,0,1,1,5.66,5.66Z"/></symbol>
+<symbol id="icon-x" viewBox="0 0 256 256"><path d="M202.83,197.17a4,4,0,0,1-5.66,5.66L128,133.66,58.83,202.83a4,4,0,0,1-5.66-5.66L122.34,128,53.17,58.83a4,4,0,0,1,5.66-5.66L128,122.34l69.17-69.17a4,4,0,1,1,5.66,5.66L133.66,128Z"/></symbol>
+<symbol id="icon-calendar-blank" viewBox="0 0 256 256"><path d="M208,36H180V24a4,4,0,0,0-8,0V36H84V24a4,4,0,0,0-8,0V36H48A12,12,0,0,0,36,48V208a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V48A12,12,0,0,0,208,36ZM48,44H76V56a4,4,0,0,0,8,0V44h88V56a4,4,0,0,0,8,0V44h28a4,4,0,0,1,4,4V84H44V48A4,4,0,0,1,48,44ZM208,212H48a4,4,0,0,1-4-4V92H212V208A4,4,0,0,1,208,212Z"/></symbol>
+<symbol id="icon-caret-down" viewBox="0 0 256 256"><path d="M210.83,98.83l-80,80a4,4,0,0,1-5.66,0l-80-80a4,4,0,0,1,5.66-5.66L128,170.34l77.17-77.17a4,4,0,1,1,5.66,5.66Z"/></symbol>
+<symbol id="icon-arrow-right" viewBox="0 0 256 256"><path d="M218.83,130.83l-72,72a4,4,0,0,1-5.66-5.66L206.34,132H40a4,4,0,0,1,0-8H206.34L141.17,58.83a4,4,0,0,1,5.66-5.66l72,72A4,4,0,0,1,218.83,130.83Z"/></symbol>
+<symbol id="icon-leaf" viewBox="0 0 256 256"><path d="M219.45,40.31a4,4,0,0,0-3.76-3.76C141.06,32.16,81.46,54.39,56.24,96,39,124.56,39.9,158.37,58.8,191.54L37.17,213.17a4,4,0,0,0,5.66,5.66l21.63-21.64c17.39,9.91,35,14.89,51.83,14.89A83.43,83.43,0,0,0,160,199.76C201.61,174.54,223.84,114.93,219.45,40.31ZM155.82,192.92c-25.37,15.37-55.56,14.75-85.48-1.61l92.5-92.49a4,4,0,0,0-5.66-5.66l-92.49,92.5c-16.36-29.92-17-60.11-1.61-85.48C86.34,61.77,141.72,41,211.66,44.34,215,114.28,194.23,169.66,155.82,192.92Z"/></symbol>
+<symbol id="icon-fire" viewBox="0 0 256 256"><path d="M179.94,152.67a53.51,53.51,0,0,1-43.28,43.27,3.68,3.68,0,0,1-.66.06,4,4,0,0,1-.66-7.94c18.18-3.06,33.63-18.51,36.72-36.73a4,4,0,0,1,7.88,1.34ZM212,144a84,84,0,0,1-168,0c0-27,10.71-54.75,31.84-82.43a4,4,0,0,1,6-.44l28.55,27.7,24.15-66.2a4,4,0,0,1,6.31-1.71C162.22,38.69,212,86.24,212,144Zm-8,0c0-50.82-41.73-93.91-63.94-113.23l-24.3,66.6a4,4,0,0,1-6.55,1.5L79.5,70C61.25,95.07,52,119.93,52,144a76,76,0,0,0,152,0Z"/></symbol>
+<symbol id="icon-television" viewBox="0 0 256 256"><path d="M216,68H137.66l41.17-41.17a4,4,0,1,0-5.66-5.66L128,66.34,82.83,21.17a4,4,0,0,0-5.66,5.66L118.34,68H40A12,12,0,0,0,28,80V200a12,12,0,0,0,12,12H216a12,12,0,0,0,12-12V80A12,12,0,0,0,216,68ZM36,200V80a4,4,0,0,1,4-4H148V204H40A4,4,0,0,1,36,200Zm184,0a4,4,0,0,1-4,4H156V76h60a4,4,0,0,1,4,4Zm-24-84a8,8,0,1,1-8-8A8,8,0,0,1,196,116Zm0,48a8,8,0,1,1-8-8A8,8,0,0,1,196,164Z"/></symbol>
+<symbol id="icon-speaker-high" viewBox="0 0 256 256"><path d="M153.76,28.41a4,4,0,0,0-4.22.43L78.63,84H32A12,12,0,0,0,20,96v64a12,12,0,0,0,12,12H78.63l70.91,55.16A4.07,4.07,0,0,0,152,228a3.92,3.92,0,0,0,1.76-.41A4,4,0,0,0,156,224V32A4,4,0,0,0,153.76,28.41ZM28,160V96a4,4,0,0,1,4-4H76v72H32A4,4,0,0,1,28,160Zm120,55.82L84,166V90l64-49.78Zm47-111.61a36,36,0,0,1,0,47.59,4,4,0,1,1-6-5.3,28,28,0,0,0,0-37,4,4,0,0,1,6-5.28ZM244,128a75.88,75.88,0,0,1-19.35,50.67,4,4,0,0,1-6-5.34,68,68,0,0,0,0-90.66,4,4,0,0,1,6-5.34A75.88,75.88,0,0,1,244,128Z"/></symbol>
+<symbol id="icon-projector-screen" viewBox="0 0 256 256"><path d="M216,76a12,12,0,0,0,12-12V48a12,12,0,0,0-12-12H40A12,12,0,0,0,28,48V64A12,12,0,0,0,40,76h4V180H32a4,4,0,0,0,0,8h92v24.4a20,20,0,1,0,8,0V188h92a4,4,0,0,0,0-8H212V76ZM140,232a12,12,0,1,1-12-12A12,12,0,0,1,140,232ZM36,64V48a4,4,0,0,1,4-4H216a4,4,0,0,1,4,4V64a4,4,0,0,1-4,4H40A4,4,0,0,1,36,64ZM204,180H52V76H204Z"/></symbol>
+<symbol id="icon-envelope-simple" viewBox="0 0 256 256"><path d="M224,52H32a4,4,0,0,0-4,4V192a12,12,0,0,0,12,12H216a12,12,0,0,0,12-12V56A4,4,0,0,0,224,52Zm-10.28,8L128,138.57,42.28,60ZM216,196H40a4,4,0,0,1-4-4V65.09L125.3,147a4,4,0,0,0,5.4,0L220,65.09V192A4,4,0,0,1,216,196Z"/></symbol>
+<symbol id="icon-bathtub" viewBox="0 0 256 256"><path d="M240,100H204V96a4,4,0,0,0-4-4H136a4,4,0,0,0-4,4v4H60V52A16,16,0,0,1,76,36,16.49,16.49,0,0,1,92.08,48.8a4,4,0,1,0,7.84-1.6A24.32,24.32,0,0,0,76,28,24,24,0,0,0,52,52v48H16a4,4,0,0,0-4,4v40a52.06,52.06,0,0,0,52,52h4v20a4,4,0,0,0,8,0V196H180v20a4,4,0,0,0,8,0V196h4a52.06,52.06,0,0,0,52-52V104A4,4,0,0,0,240,100Zm-100,0h56v40H140Zm96,44a44.05,44.05,0,0,1-44,44H64a44.05,44.05,0,0,1-44-44V108H132v36a4,4,0,0,0,4,4h64a4,4,0,0,0,4-4V108h32Z"/></symbol>
+<symbol id="icon-chef-hat" viewBox="0 0 256 256"><path d="M236,112a52.06,52.06,0,0,0-52-52,53,53,0,0,0-7.77.59,52,52,0,0,0-96.46,0A53,53,0,0,0,72,60,52,52,0,0,0,52,160v48a12,12,0,0,0,12,12H192a12,12,0,0,0,12-12V160A52.07,52.07,0,0,0,236,112Zm-40,96a4,4,0,0,1-4,4H64a4,4,0,0,1-4-4V162.59A52.13,52.13,0,0,0,72,164H184a52.13,52.13,0,0,0,12-1.41Zm-12-52H165.12l6.76-27a4,4,0,0,0-7.76-1.94l-7.24,29H132V128a4,4,0,0,0-8,0v28H99.12l-7.24-29A4,4,0,1,0,84.12,129l6.76,27H72a44,44,0,0,1,0-88,45.3,45.3,0,0,1,5.34.33A51.68,51.68,0,0,0,76,80a4,4,0,0,0,8,0,44,44,0,0,1,88,0,4,4,0,0,0,8,0,51.68,51.68,0,0,0-1.34-11.67A45.3,45.3,0,0,1,184,68a44,44,0,0,1,0,88Z"/></symbol>
+<symbol id="icon-sun" viewBox="0 0 256 256"><path d="M124,40V16a4,4,0,0,1,8,0V40a4,4,0,0,1-8,0Zm64,88a60,60,0,1,1-60-60A60.07,60.07,0,0,1,188,128Zm-8,0a52,52,0,1,0-52,52A52.06,52.06,0,0,0,180,128ZM61.17,66.83a4,4,0,0,0,5.66-5.66l-16-16a4,4,0,0,0-5.66,5.66Zm0,122.34-16,16a4,4,0,0,0,5.66,5.66l16-16a4,4,0,0,0-5.66-5.66ZM192,68a4,4,0,0,0,2.83-1.17l16-16a4,4,0,1,0-5.66-5.66l-16,16A4,4,0,0,0,192,68Zm2.83,121.17a4,4,0,0,0-5.66,5.66l16,16a4,4,0,0,0,5.66-5.66ZM40,124H16a4,4,0,0,0,0,8H40a4,4,0,0,0,0-8Zm88,88a4,4,0,0,0-4,4v24a4,4,0,0,0,8,0V216A4,4,0,0,0,128,212Zm112-88H216a4,4,0,0,0,0,8h24a4,4,0,0,0,0-8Z"/></symbol>
+<symbol id="icon-flower-lotus" viewBox="0 0 256 256"><path d="M242.37,123.65a11.54,11.54,0,0,0-7.08-5.46A71.5,71.5,0,0,0,209,116.52c5.48-21.46,2.38-38.36-.75-48a12.16,12.16,0,0,0-14.16-8.19,82.85,82.85,0,0,0-31,14.17,91.06,91.06,0,0,0-27.9-36,11.91,11.91,0,0,0-14.44,0,91.06,91.06,0,0,0-27.9,36,82.92,82.92,0,0,0-31-14.17,12.16,12.16,0,0,0-14.16,8.19c-3.13,9.68-6.23,26.58-.75,48a71.5,71.5,0,0,0-26.26,1.67,11.54,11.54,0,0,0-7.08,5.46,12,12,0,0,0-1.2,9.22c3.24,12,13.2,34.81,43.52,52.92S113.45,204,128,204s41.61,0,72.07-18.21,40.28-40.93,43.52-52.92A12,12,0,0,0,242.37,123.65ZM195.8,68.11A4.2,4.2,0,0,1,200.67,71c4,12.5,8,38.35-10.77,71-10.45,18.19-25.11,32.2-38.11,41.44C162,170,172,149.24,172,119.19a113.35,113.35,0,0,0-5.88-37A75.28,75.28,0,0,1,195.8,68.11ZM55.33,71a4.19,4.19,0,0,1,4.87-2.84A75.28,75.28,0,0,1,89.88,82.19a113.35,113.35,0,0,0-5.88,37c0,30.05,10,50.82,20.21,64.23-13-9.24-27.66-23.25-38.11-41.44C47.32,109.3,51.29,83.45,55.33,71Zm4.72,108c-27.9-16.67-37-37.32-39.9-48.15a4,4,0,0,1,.41-3.13,3.59,3.59,0,0,1,2.21-1.73,64.62,64.62,0,0,1,26.73-1,123.48,123.48,0,0,0,9.66,21c13.28,23.1,32.66,39.67,48.27,49.11A116.34,116.34,0,0,1,60.05,178.93Zm68,16.34a75.75,75.75,0,0,1-17.08-16.4C98.37,162.58,92,142.5,92,119.19c0-44.25,23.49-66.75,33.59-74.36a4,4,0,0,1,4.82,0C140.51,52.44,164,74.94,164,119.19c0,23.31-6.37,43.39-18.92,59.68A75.75,75.75,0,0,1,128,195.27Zm107.85-64.49c-2.92,10.83-12,31.48-39.9,48.15a116.34,116.34,0,0,1-47.38,16.15c15.61-9.44,35-26,48.27-49.11a123.48,123.48,0,0,0,9.66-21,64.45,64.45,0,0,1,26.73,1,3.59,3.59,0,0,1,2.21,1.73A4,4,0,0,1,235.85,130.78Z"/></symbol>
+<symbol id="icon-footprints" viewBox="0 0 256 256"><path d="M208,188H152a4,4,0,0,0-4,4v12a32,32,0,1,0,64,0V192A4,4,0,0,0,208,188Zm-4,16a24,24,0,1,1-48,0v-8h48ZM104,164H48a4,4,0,0,0-4,4v12a32,32,0,1,0,64,0V168A4,4,0,0,0,104,164Zm-4,16a24,24,0,1,1-48,0v-8h48ZM76,20c-9.82,0-20.07,9.75-28.12,26.75-13.39,28.27-18,70.05-.23,91.78a4,4,0,0,0,3.1,1.47h50.51a4,4,0,0,0,3.1-1.47c17.79-21.73,13.16-63.51-.23-91.78C96.08,29.75,85.83,20,76,20ZM99.3,132H52.71c-13.8-19-9.79-56.08,2.4-81.82C61.59,36.5,69.59,28,76,28s14.42,8.5,20.9,22.18C109.09,75.92,113.1,113,99.3,132Zm55.44,32h50.51a4,4,0,0,0,3.1-1.47c17.79-21.73,13.16-63.51-.23-91.78C200.07,53.75,189.82,44,180,44s-20.08,9.75-28.13,26.75c-13.39,28.27-18,70.05-.23,91.78A4,4,0,0,0,154.74,164Zm4.36-89.82C165.58,60.5,173.58,52,180,52s14.41,8.5,20.89,22.18c12.19,25.74,16.2,62.82,2.4,81.82H156.7C142.9,137,146.91,99.92,159.1,74.18Z"/></symbol>
+<symbol id="icon-lock" viewBox="0 0 256 256"><path d="M208,84H172V56a44,44,0,0,0-88,0V84H48A12,12,0,0,0,36,96V208a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V96A12,12,0,0,0,208,84ZM92,56a36,36,0,0,1,72,0V84H92ZM212,208a4,4,0,0,1-4,4H48a4,4,0,0,1-4-4V96a4,4,0,0,1,4-4H208a4,4,0,0,1,4,4Zm-76-56a8,8,0,1,1-8-8A8,8,0,0,1,136,152Z"/></symbol>
+<symbol id="icon-cards-three" viewBox="0 0 256 256"><path d="M208,92H48a12,12,0,0,0-12,12v96a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V104A12,12,0,0,0,208,92Zm4,108a4,4,0,0,1-4,4H48a4,4,0,0,1-4-4V104a4,4,0,0,1,4-4H208a4,4,0,0,1,4,4ZM52,64a4,4,0,0,1,4-4H200a4,4,0,0,1,0,8H56A4,4,0,0,1,52,64ZM68,32a4,4,0,0,1,4-4H184a4,4,0,0,1,0,8H72A4,4,0,0,1,68,32Z"/></symbol>
+<symbol id="icon-key" viewBox="0 0 256 256"><path d="M213.74,42.26A76,76,0,0,0,88.51,121.84l-57,57A11.93,11.93,0,0,0,28,187.31V216a12,12,0,0,0,12,12H72a4,4,0,0,0,4-4V204H96a4,4,0,0,0,4-4V180h20a4,4,0,0,0,2.83-1.17l11.33-11.34A75.72,75.72,0,0,0,160,172h.1A76,76,0,0,0,213.74,42.26Zm14.22,56c-1.15,36.22-31.6,65.72-67.87,65.77H160a67.52,67.52,0,0,1-25.21-4.83,4,4,0,0,0-4.45.83l-12,12H96a4,4,0,0,0-4,4v20H72a4,4,0,0,0-4,4v20H40a4,4,0,0,1-4-4V187.31a4.06,4.06,0,0,1,1.17-2.83L96,125.66a4,4,0,0,0,.83-4.45A67.51,67.51,0,0,1,92,95.91C92,59.64,121.55,29.19,157.77,28A68,68,0,0,1,228,98.23ZM188,76a8,8,0,1,1-8-8A8,8,0,0,1,188,76Z"/></symbol>
+<symbol id="icon-washing-machine" viewBox="0 0 256 256"><path d="M208,36H48A12,12,0,0,0,36,48V208a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V48A12,12,0,0,0,208,36Zm4,172a4,4,0,0,1-4,4H48a4,4,0,0,1-4-4V48a4,4,0,0,1,4-4H208a4,4,0,0,1,4,4ZM128,68a60,60,0,1,0,60,60A60.07,60.07,0,0,0,128,68Zm0,112a52,52,0,1,1,52-52A52.06,52.06,0,0,1,128,180ZM196,68a8,8,0,1,1-8-8A8,8,0,0,1,196,68Zm-73.17,46.83-16,16a4,4,0,0,1-5.66-5.66l16-16a4,4,0,0,1,5.66,5.66Zm32,2.34a4,4,0,0,1,0,5.66l-32,32a4,4,0,0,1-5.66-5.66l32-32A4,4,0,0,1,154.83,117.17Z"/></symbol>
+<symbol id="icon-bowl-food" viewBox="0 0 256 256"><path d="M224,108H211.9a84,84,0,0,0-167.8,0H32a4,4,0,0,0-4,4,100.32,100.32,0,0,0,56,89.82V208a12,12,0,0,0,12,12h64a12,12,0,0,0,12-12v-6.18A100.32,100.32,0,0,0,228,112,4,4,0,0,0,224,108Zm-20.11,0H141.05a75.92,75.92,0,0,1,50.16-38.14A75.45,75.45,0,0,1,203.89,108ZM186,62.93A83.92,83.92,0,0,0,132.08,108H94.68A76.22,76.22,0,0,1,168,52c2.33,0,4.68.13,7,.34A76.81,76.81,0,0,1,186,62.93ZM128,36a75.48,75.48,0,0,1,34.3,8.21A84.26,84.26,0,0,0,86.41,108H52.11A76.09,76.09,0,0,1,128,36Zm38.33,159.66A4,4,0,0,0,164,199.3V208a4,4,0,0,1-4,4H96a4,4,0,0,1-4-4v-8.7a4,4,0,0,0-2.33-3.64A92.33,92.33,0,0,1,36.09,116H219.91A92.33,92.33,0,0,1,166.33,195.66Z"/></symbol>
+<symbol id="icon-youtube-logo" viewBox="0 0 256 256"><path d="M162.22,124.67l-48-32A4,4,0,0,0,108,96v64a4,4,0,0,0,2.11,3.53,4,4,0,0,0,4.11-.2l48-32a4,4,0,0,0,0-6.66ZM116,152.53V103.47L152.79,128Zm114.46-82A20,20,0,0,0,218.4,56.85C184.6,43.79,130.27,44,128,44S71.4,43.79,37.6,56.85A20,20,0,0,0,25.54,70.52C23,80.27,20,98.16,20,128s3,47.73,5.54,57.48A20,20,0,0,0,37.6,199.15C71.4,212.21,125.73,212,128,212h.71c6.89,0,57.58-.43,89.72-12.85a20,20,0,0,0,12.06-13.67C233,175.72,236,157.84,236,128S233,80.27,230.46,70.52Zm-7.74,113a12,12,0,0,1-7.21,8.22C183.14,204.19,128.57,204,128,204s-55.11.19-87.48-12.31a12,12,0,0,1-7.21-8.22C30.87,174.17,28,157,28,128s2.87-46.17,5.28-55.47a12,12,0,0,1,7.21-8.22C72.86,51.81,127.43,52,128,52s55.11-.2,87.48,12.31a12,12,0,0,1,7.21,8.22C225.13,81.83,228,99,228,128S225.13,174.17,222.72,183.47Z"/></symbol>
+<symbol id="icon-telegram-logo" viewBox="0 0 256 256"><path d="M226.27,29.22a5,5,0,0,0-5.1-.87L18.51,107.66a10.22,10.22,0,0,0,1.75,19.56L76,138.16V200a12,12,0,0,0,7.51,11.13A12.1,12.1,0,0,0,88,212a12,12,0,0,0,8.62-3.68l28-29,43,37.71a12,12,0,0,0,7.89,3,12.47,12.47,0,0,0,3.74-.59,11.87,11.87,0,0,0,8-8.72L227.87,34.12A5,5,0,0,0,226.27,29.22ZM20,117.38a2.13,2.13,0,0,1,1.42-2.27L196.07,46.76l-117,83.85L21.81,119.37A2.12,2.12,0,0,1,20,117.38Zm70.87,85.38A4,4,0,0,1,84,200V143.7L118.58,174Zm88.58,6.14a4,4,0,0,1-6.57,2.09L86.43,135.18,218.13,40.8Z"/></symbol>
+<symbol id="icon-instagram-logo" viewBox="0 0 256 256"><path d="M128,84a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,84Zm0,80a36,36,0,1,1,36-36A36,36,0,0,1,128,164ZM176,28H80A52.06,52.06,0,0,0,28,80v96a52.06,52.06,0,0,0,52,52h96a52.06,52.06,0,0,0,52-52V80A52.06,52.06,0,0,0,176,28Zm44,148a44.05,44.05,0,0,1-44,44H80a44.05,44.05,0,0,1-44-44V80A44.05,44.05,0,0,1,80,36h96a44.05,44.05,0,0,1,44,44ZM188,76a8,8,0,1,1-8-8A8,8,0,0,1,188,76Z"/></symbol>
+<symbol id="icon-waves" viewBox="0 0 256 256"><path d="M197.2,176.87c-13.07,11.18-24.9,15.1-35.64,15.1-14.26,0-26.62-6.92-37.47-13-18.41-10.31-32.95-18.45-54.89.31a8,8,0,1,1-10.4-12.16c30.42-26,54.09-12.76,73.11-2.11,18.41,10.31,33,18.45,54.89-.31a8,8,0,0,1,10.4,12.16Zm0-44c-13.07,11.18-24.9,15.1-35.64,15.1-14.26,0-26.62-6.92-37.47-13-18.41-10.31-32.95-18.45-54.89.31a8,8,0,0,1-10.4-12.16c30.42-26,54.09-12.76,73.11-2.11,18.41,10.31,33,18.45,54.89-.31a8,8,0,1,1,10.4,12.16Zm0-44c-13.07,11.18-24.9,15.1-35.64,15.1-14.26,0-26.62-6.92-37.47-13-18.41-10.31-32.95-18.45-54.89.31A8,8,0,0,1,58.8,79.13c30.42-26,54.09-12.76,73.11-2.11,18.41,10.31,33,18.45,54.89-.31a8,8,0,1,1,10.4,12.16Z"/></symbol>
+<symbol id="icon-shopping-cart" viewBox="0 0 256 256"><path d="M239.71,74.14l-25.64,92.28A24.06,24.06,0,0,1,191,184H92.16A24.06,24.06,0,0,1,69,166.42L33.92,40H16a8,8,0,0,1,0-16H40a8,8,0,0,1,7.71,5.86L57.19,64H232a8,8,0,0,1,7.71,10.14ZM88,200a16,16,0,1,0,16,16A16,16,0,0,0,88,200Zm104,0a16,16,0,1,0,16,16A16,16,0,0,0,192,200Z"/></symbol>
+</svg>
+
+<!-- =================== HEADER =================== -->
+<header data-header>
+  <div class="wrap">
+    <div class="header-row">
+      <a class="brand" href="#top">Little&nbsp;Yard</a>
+      <nav class="primary-nav" id="primary-nav">
+        <a href="#houses">Дома</a>
+        <a href="#weekdays">Будни</a>
+        <a href="#territory">Территория</a>
+        <a href="#rules">Условия</a>
+        <a href="#route">Как&nbsp;добраться</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-primary btn-sm" href="#booking"><span>Узнать свободные даты</span><svg class="icon"><use href="#icon-calendar-blank"/></svg></a>
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Открыть меню">
+          <svg class="icon icon-lg"><use href="#icon-caret-down"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- =================== HERO =================== -->
+  <section class="hero" id="top" aria-label="Главный экран">
+    <div class="hero-photo reveal" data-reveal>
+      <img src="/_blob/73b83d75cdc13d199c904965a97d726c" alt="Дома Little Yard в лесу на закате" loading="eager" width="2000" height="1125">
+      <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="wrap hero-copy">
+        <h1>Ваши дни за&nbsp;городом</h1>
+        <p class="hero-desc">Отдельный дом для жизни в&nbsp;своём ритме. Приезжайте на&nbsp;выходные или останьтесь среди недели&nbsp;— с&nbsp;семьёй, работой и&nbsp;привычными удобствами.</p>
+        <div class="quick-facts">
+          <span class="chip"><svg class="icon"><use href="#icon-house"/></svg>Дом целиком</span>
+          <span class="chip"><svg class="icon"><use href="#icon-bed"/></svg>Две спальни</span>
+          <span class="chip"><svg class="icon"><use href="#icon-wifi-high"/></svg>Оптоволоконный интернет</span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#houses">Выбрать дом<svg class="icon"><use href="#icon-arrow-right"/></svg></a>
+          <a class="btn btn-ghost" href="#territory">Что на территории</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ИНТРО =================== -->
+  <section class="band" aria-label="О месте">
+    <div class="wrap intro-grid">
+      <div class="reveal" data-reveal>
+        <h2 class="title">Четыре дома на&nbsp;одном тихом участке</h2>
+        <p class="lede">Мы сдаём дома сами, без управляющей компании,&nbsp;— поэтому можем ответить на&nbsp;любой вопрос лично. Все дома стоят на&nbsp;одной благоустроенной территории: общий въезд, общая охрана, у&nbsp;каждого&nbsp;— свой участок и&nbsp;вход. Пятый дом сейчас строится и&nbsp;пока не&nbsp;сдаётся.</p>
+      </div>
+      <div class="intro-mosaic reveal" data-reveal aria-label="Четыре дома на участке">
+        <div class="m-item"><img src="/_blob/3a86af97b4d3fa12036d54c0ffc97c04" alt="Дом 1" loading="lazy"><span>Дом 1</span></div>
+        <div class="m-item"><img src="/_blob/e8f2ba9c9031d7ec8b4360bbd9154ad8" alt="Дом 2" loading="lazy"><span>Дом 2</span></div>
+        <div class="m-item"><img src="/_blob/7d794bf6cfd535fd0e2e9e102b1aa889" alt="Дом 3" loading="lazy"><span>Дом 3</span></div>
+        <div class="m-item"><img src="/_blob/b96c36f03ecc3b3ae161b5b2127375a0" alt="Дом 4" loading="lazy"><span>Дом 4</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ДОМА =================== -->
+  <section class="band" id="houses" aria-label="Дома">
+    <div class="wrap">
+      <h2 class="title">Один шаблон, четыре характера участка</h2>
+      <p class="lede">Планировка у&nbsp;домов одинаковая, отличаются расположение на&nbsp;участке и&nbsp;оснащение. Точные площадь, цены и&nbsp;фото уточняются&nbsp;— сейчас это рабочий макет структуры.</p>
+
+      <div class="houses-grid" id="housesGrid"></div>
+    </div>
+  </section>
+
+  <!-- =================== БУДНИ / УДАЛЁНКА =================== -->
+  <section class="band" id="weekdays" aria-label="Будни и удалённая работа">
+    <div class="wrap weekday-grid">
+      <div class="reveal" data-reveal>
+        <h2 class="title">Можно работать, а&nbsp;не&nbsp;только отдыхать</h2>
+        <p class="lede">Во&nbsp;всех домах проведён кабельный оптоволоконный интернет&nbsp;— он&nbsp;не&nbsp;зависит от&nbsp;погоды и&nbsp;мобильной сети, этого достаточно для видеозвонков и&nbsp;полноценной удалённой работы.</p>
+        <div class="stat-row">
+          <div class="stat"><b>−30%</b><span>Скидка пн–пт</span></div>
+          <div class="stat"><b>24/7</b><span>Оптоволокно без обрывов</span></div>
+          <div class="stat"><b>0</b><span>Причин покидать территорию</span></div>
+        </div>
+      </div>
+      <div class="card weekday-card reveal" data-reveal>
+        <h3 style="font-size:1.05rem;font-weight:500;margin-bottom:.9em">Что это даёт</h3>
+        <ul>
+          <li><svg class="icon icon-lg"><use href="#icon-wifi-high"/></svg><span>Стабильная связь для звонков и&nbsp;конференций в&nbsp;любую погоду</span></li>
+          <li><svg class="icon icon-lg"><use href="#icon-bowl-food"/></svg><span>Доставка еды на&nbsp;территорию&nbsp;— можно не&nbsp;выезжать весь срок</span></li>
+          <li><svg class="icon icon-lg"><use href="#icon-calendar-blank"/></svg><span>Скидка около 30% при заезде с&nbsp;понедельника по&nbsp;пятницу</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ТЕРРИТОРИЯ =================== -->
+  <section class="band" id="territory" aria-label="Территория и удобства">
+    <div class="wrap">
+      <div class="territory-layout">
+        <div class="territory-text">
+          <h2 class="title">Общая территория, которую видно из&nbsp;каждого дома</h2>
+          <p class="lede">Участок огорожен, есть охрана и&nbsp;видеонаблюдение. У&nbsp;каждого дома&nbsp;— своя зона и&nbsp;3&nbsp;парковочных места.</p>
+          <div class="feature-grid">
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-fire"/></svg></span><h3>Мангал</h3><p>Зона для&nbsp;гриля на&nbsp;свежем воздухе, доступна каждому дому.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-car-simple"/></svg></span><h3>Парковка</h3><p>3&nbsp;машиноместа у&nbsp;каждого дома, без необходимости бронировать заранее.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-bowl-food"/></svg></span><h3>Кафе на&nbsp;территории</h3><p>Можно позавтракать и&nbsp;поужинать, не&nbsp;выезжая с&nbsp;участка.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-shield-check"/></svg></span><h3>Охрана и&nbsp;видеонаблюдение</h3><p>Территория огорожена и&nbsp;круглосуточно просматривается камерами.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-washing-machine"/></svg></span><h3>Стиральная машина</h3><p>В&nbsp;каждом доме&nbsp;— своя, стирать для соседей не&nbsp;придётся.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-key"/></svg></span><h3>Уборка и&nbsp;доставка</h3><p>Уборка каждые 3&nbsp;дня и&nbsp;по&nbsp;запросу; доставка еды принимается на&nbsp;территории.</p></div>
+          </div>
+        </div>
+        <figure class="territory-photo reveal" data-reveal>
+          <img src="/_blob/d213418973b5175809e64eb03468b5a5" alt="Вид на общую территорию Little Yard из окна одного из домов: лужайка, мангал и соседние дома среди леса" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ДЕТИ И ПИТОМЦЫ =================== -->
+  <section class="band" aria-label="Дети и питомцы">
+    <div class="wrap">
+      <div class="territory-layout">
+        <div class="territory-text">
+          <h2 class="title">Приезжайте всей семьёй&nbsp;— с&nbsp;детьми и&nbsp;животными</h2>
+          <div class="feature-list">
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-baby"/></svg></span><h3>Детская площадка</h3><p>На&nbsp;территории есть небольшая площадка и&nbsp;настольный теннис.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-bed"/></svg></span><h3>Детская кроватка</h3><p>Предоставим в&nbsp;дом по&nbsp;запросу&nbsp;— отметьте при бронировании.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-paw-print"/></svg></span><h3>Можно с&nbsp;питомцем</h3><p>По&nbsp;предварительному согласованию&nbsp;— подходит не&nbsp;каждая порода и&nbsp;размер, отказов пока не&nbsp;было.</p></div>
+            <div class="feature reveal" data-reveal><span class="icon-wrap"><svg class="icon icon-lg"><use href="#icon-footprints"/></svg></span><h3>Прогулки с&nbsp;собакой</h3><p>Рядом&nbsp;— лес и&nbsp;река, маршруты для прогулок с&nbsp;животными разной длины.</p></div>
+          </div>
+        </div>
+        <figure class="territory-photo reveal" data-reveal>
+          <img src="/_blob/a69326b7de75d9ff082cabb26567feac" alt="Семья с ребёнком и собакой отдыхает на диване в гостиной одного из домов Little Yard, панорамные окна с видом на лес" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== КАРТА =================== -->
+  <section class="band" id="route" aria-label="Вид на комплекс и окрестности">
+    <div class="wrap">
+      <h2 class="title">Комплекс и&nbsp;что рядом</h2>
+      <p class="lede">Вид участка сверху — дома и&nbsp;точки проявляются по&nbsp;мере прокрутки. Снимок черновой, заменим на&nbsp;настоящий; маршрут от&nbsp;Москвы — предварительный, точный адрес уточняется.</p>
+
+      <div class="map-wrap" id="mapWrap">
+        <img class="map-photo" src="/_blob/e467a9594604ab7c825425109b508b75" alt="Вид на участок Little Yard с воздуха: четыре дома на одной территории, лес и река рядом" loading="lazy">
+        <div class="map-tone" aria-hidden="true"></div>
+
+        <div class="map-pin-anchor" style="left:33%; top:34%">
+          <div class="map-marker map-pin" data-marker="1"><span class="pin-dot">1</span><span class="pin-label">Дом 1</span></div>
+        </div>
+        <div class="map-pin-anchor" style="left:57%; top:22%">
+          <div class="map-marker map-pin" data-marker="2"><span class="pin-dot">2</span><span class="pin-label">Дом 2</span></div>
+        </div>
+        <div class="map-pin-anchor" style="left:36%; top:64%">
+          <div class="map-marker map-pin" data-marker="3"><span class="pin-dot">3</span><span class="pin-label">Дом 3</span></div>
+        </div>
+        <div class="map-pin-anchor" style="left:63%; top:53%">
+          <div class="map-marker map-pin" data-marker="4"><span class="pin-dot">4</span><span class="pin-label">Дом 4</span></div>
+        </div>
+        <div class="map-pin-anchor" style="left:86%; top:24%">
+          <div class="map-marker map-pin pin-alt" data-marker="river"><span class="pin-dot"></span><span class="pin-label">река Мелька — 10 мин пешком</span></div>
+        </div>
+      </div>
+      <div class="map-legend">
+        <span><span class="legend-dot"></span>Дома на участке</span>
+        <span><span class="legend-dot alt"></span>Река</span>
+      </div>
+
+      <div class="route-card reveal" data-reveal aria-label="Маршрут от Москвы">
+        <div class="route-card-row">
+          <svg class="icon icon-lg"><use href="#icon-map-pin"/></svg>
+          <div><b>≈ 52 км</b><span>от делового центра Москвы (Москва-Сити)</span></div>
+        </div>
+        <div class="route-card-row">
+          <svg class="icon icon-lg"><use href="#icon-car-simple"/></svg>
+          <div><b>1 ч 15 мин – 1 ч 30 мин</b><span>на автомобиле по Новорижскому шоссе (М-9) в сторону Звенигорода — время зависит от маршрута и загруженности дорог</span></div>
+        </div>
+        <a class="btn btn-ghost route-card-cta" href="https://yandex.ru/maps/?rtext=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0~Little%20Yard&rtt=auto" target="_blank" rel="noopener">Проложить маршрут<svg class="icon"><use href="#icon-arrow-right"/></svg></a>
+      </div>
+
+      <ul class="nearby-list">
+        <li><b><svg class="icon"><use href="#icon-waves"/></svg>Река Мелька</b><small>10 мин пешком</small></li>
+        <li><b><svg class="icon"><use href="#icon-footprints"/></svg>6 маршрутов для прогулок</b><small>20 мин – 2 часа</small></li>
+        <li><b><svg class="icon"><use href="#icon-shopping-cart"/></svg>«Лента» / «Магнит»</b><small>2 мин на авто</small></li>
+        <li><b><svg class="icon"><use href="#icon-bowl-food"/></svg>Кафе и ресторан</b><small>4 мин на авто</small></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =================== ЦЕНЫ И ПРАВИЛА =================== -->
+  <section class="band" id="rules" aria-label="Цены и правила">
+    <div class="wrap">
+      <h2 class="title">Цены и&nbsp;правила проживания</h2>
+      <div class="rules-grid">
+        <div>
+          <dl>
+            <dt>Заезд</dt><dd>с&nbsp;17:00</dd>
+            <dt>Выезд</dt><dd>до&nbsp;12:00</dd>
+            <dt>Уборка</dt><dd>каждые 3&nbsp;дня и&nbsp;по&nbsp;запросу</dd>
+            <dt>Будни пн–пт</dt><dd>скидка ≈30%</dd>
+          </dl>
+        </div>
+        <ul class="rules-list">
+          <li><svg class="icon icon-lg"><use href="#icon-x"/></svg><span>Курение в&nbsp;домах запрещено</span></li>
+          <li><svg class="icon icon-lg"><use href="#icon-clock"/></svg><span>Тишина после 22:00</span></li>
+          <li><svg class="icon icon-lg"><use href="#icon-paw-print"/></svg><span>Животные&nbsp;— по&nbsp;согласованию при бронировании</span></li>
+          <li><svg class="icon icon-lg"><use href="#icon-lock"/></svg><span>Территория закрыта для посторонних, под видеонаблюдением</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FAQ =================== -->
+  <section class="band" aria-label="Частые вопросы">
+    <div class="wrap">
+      <h2 class="title">Частые вопросы</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Можно ли приехать с&nbsp;животным?<svg class="icon"><use href="#icon-caret-down"/></svg></summary>
+          <div class="faq-a">Да, по&nbsp;предварительному согласованию&nbsp;— подходит не&nbsp;каждая порода и&nbsp;размер. Отметьте это при&nbsp;бронировании или напишите менеджеру заранее.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Какой интернет в&nbsp;домах?<svg class="icon"><use href="#icon-caret-down"/></svg></summary>
+          <div class="faq-a">Во&nbsp;всех домах проведён оптоволоконный интернет&nbsp;— он&nbsp;не&nbsp;зависит от&nbsp;погоды и&nbsp;мобильной сети, этого достаточно для видеозвонков и&nbsp;удалённой работы.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Во&nbsp;сколько заезд и&nbsp;выезд?<svg class="icon"><use href="#icon-caret-down"/></svg></summary>
+          <div class="faq-a">Заезд&nbsp;— с&nbsp;17:00, выезд&nbsp;— до&nbsp;12:00. Уборка в&nbsp;доме происходит каждые три дня и&nbsp;дополнительно по&nbsp;запросу.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Есть&nbsp;ли скидка на&nbsp;будние дни?<svg class="icon"><use href="#icon-caret-down"/></svg></summary>
+          <div class="faq-a">Да, при&nbsp;заезде с&nbsp;понедельника по&nbsp;пятницу действует скидка около 30% от&nbsp;стандартной цены.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Что если виджет бронирования не&nbsp;загрузится?<svg class="icon"><use href="#icon-caret-down"/></svg></summary>
+          <div class="faq-a">Воспользуйтесь формой обратной связи ниже&nbsp;— менеджер свяжется с&nbsp;вами напрямую и&nbsp;поможет забронировать дом.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== БРОНИРОВАНИЕ =================== -->
+  <section class="band" id="booking" aria-label="Бронирование">
+    <div class="wrap">
+      <h2 class="title">Выберите даты и&nbsp;забронируйте дом</h2>
+      <p class="lede">Ниже&nbsp;— предварительный расчёт стоимости на&nbsp;демонстрационных ценах (заменим на&nbsp;настоящие перед запуском). Окончательное бронирование проходит через сервис партнёра; если виджет не&nbsp;загрузится или нужен особый случай (например, питомец)&nbsp;— заполните форму справа, и&nbsp;мы&nbsp;свяжемся сами.</p>
+
+      <div class="booking-grid">
+        <div class="card booking-calc" id="bookingCalc">
+          <h3 style="font-size:1.05rem;font-weight:500;margin:0 0 1.1em">Предварительный расчёт стоимости</h3>
+          <div class="calc-row">
+            <div class="field">
+              <label for="calc-house">Дом</label>
+              <select id="calc-house"></select>
+            </div>
+          </div>
+          <div class="calc-row calc-dates">
+            <div class="field">
+              <label for="calc-checkin">Заезд</label>
+              <input type="date" id="calc-checkin">
+            </div>
+            <div class="field">
+              <label for="calc-checkout">Выезд</label>
+              <input type="date" id="calc-checkout">
+            </div>
+          </div>
+          <div class="calc-result" id="calcResult">
+            <p class="form-note" style="margin:0">Выберите дом и&nbsp;даты, чтобы увидеть предварительную стоимость.</p>
+          </div>
+          <p class="form-note" style="margin-top:1rem">Демонстрационные цены для прототипа. Точная стоимость и&nbsp;доступность дат подтверждаются при&nbsp;бронировании.</p>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="field">
+            <label for="f-name">Имя</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="field">
+            <label for="f-comment">Комментарий</label>
+            <textarea id="f-comment" name="comment" rows="3" placeholder="Например: даты, дом, вопрос по питомцу"></textarea>
+          </div>
+          <label class="checkbox-row"><input type="checkbox" id="f-pet" name="pet"> Приеду с&nbsp;питомцем</label>
+          <button class="btn btn-primary" type="submit">Отправить заявку</button>
+          <p class="form-note" id="formStatus">Заявка придёт менеджеру в&nbsp;Telegram — он&nbsp;свяжется с&nbsp;вами напрямую.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <p class="brand" style="margin-bottom:.6em">Little&nbsp;Yard</p>
+        <p class="lede" style="font-size:.95rem">Четыре загородных дома на&nbsp;одном тихом участке. Без управляющей компании&nbsp;— хозяин на&nbsp;связи лично.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="#houses">Дома</a></li>
+          <li><a href="#weekdays">Будни</a></li>
+          <li><a href="#territory">Территория</a></li>
+          <li><a href="#rules">Условия</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li><svg class="icon" style="display:inline;vertical-align:-2px;margin-right:.4em"><use href="#icon-phone"/></svg>+7 (000) 000-00-00</li>
+          <li><svg class="icon" style="display:inline;vertical-align:-2px;margin-right:.4em"><use href="#icon-map-pin"/></svg>Адрес уточняется</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Мы в&nbsp;соцсетях</h4>
+        <div class="social-list">
+          <a class="social-link" href="#" aria-label="YouTube" data-social="youtube"><svg class="icon"><use href="#icon-youtube-logo"/></svg></a>
+          <a class="social-link" href="#" aria-label="Telegram" data-social="telegram"><svg class="icon"><use href="#icon-telegram-logo"/></svg></a>
+          <a class="social-link" href="#" aria-label="Instagram" data-social="instagram"><svg class="icon"><use href="#icon-instagram-logo"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Little Yard. Прототип Phase&nbsp;1&nbsp;— визуальный макет для согласования. Концепция «Тихий дом».</span>
+      <nav class="footer-legal" aria-label="Юридическая информация">
+        <button type="button" class="legal-link" data-legal="privacy">Политика обработки данных</button>
+        <button type="button" class="legal-link" data-legal="offer">Договор оферты</button>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<!-- =================== МОДАЛКА ЮР. ДОКУМЕНТОВ (единый шаблон) =================== -->
+<dialog class="legal-dialog" id="legalDialog">
+  <div class="legal-scroll">
+    <div class="legal-head">
+      <h3 id="legalTitle"></h3>
+      <button class="dialog-close" id="legalClose" aria-label="Закрыть"><svg class="icon icon-lg"><use href="#icon-x"/></svg></button>
+    </div>
+    <div class="legal-body" id="legalBody"></div>
+  </div>
+</dialog>
+
+<!-- =================== МОДАЛКА ДОМА (единый шаблон) =================== -->
+<dialog class="house-dialog" id="houseDialog">
+  <div class="dialog-scroll">
+    <div class="dialog-head">
+      <button class="dialog-close" id="dialogClose" aria-label="Закрыть"><svg class="icon icon-lg"><use href="#icon-x"/></svg></button>
+      <img id="dialogPhoto" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center">
+    </div>
+    <div class="dialog-body">
+      <div class="dialog-top">
+        <h3 id="dialogName"></h3>
+        <div class="dialog-facts" id="dialogFacts"></div>
+      </div>
+      <ul class="dialog-amenities" id="dialogAmenities"></ul>
+      <p class="dialog-pet" id="dialogPet"></p>
+      <div class="dialog-foot">
+        <div><b id="dialogPrice" style="font-size:1.3rem"></b> <span class="form-note" id="dialogPriceNote"></span></div>
+        <a class="btn btn-primary" href="#booking" id="dialogCta">Забронировать<svg class="icon"><use href="#icon-arrow-right"/></svg></a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- =================== GSAP (анимации по мотивам loamhouse.com.au: мягкий scroll-reveal) =================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- данные по домам (общий шаблон попапа, один источник) ---------- */
+  var HOUSES = [
+    { id:1, name:"Дом 1", area:"90 м²", capacity:"до 4 гостей", beds:"2 спальни",
+      amenities:["Кухня и духовка","Стиральная машина","Умная колонка","Проектор"],
+      pet:"С животными — по согласованию.", priceWeekend:8000, priceNote:"−30% в будни",
+      photo:"/_blob/3a86af97b4d3fa12036d54c0ffc97c04" },
+    { id:2, name:"Дом 2", area:"80 м²", capacity:"до 4 гостей", beds:"2 спальни",
+      amenities:["Кухня и духовка","Стиральная машина","Умная колонка","Телевизор"],
+      pet:"Без животных.", priceWeekend:7500, priceNote:"−30% в будни",
+      photo:"/_blob/e8f2ba9c9031d7ec8b4360bbd9154ad8" },
+    { id:3, name:"Дом 3", area:"110 м²", capacity:"до 4 гостей", beds:"2 спальни",
+      amenities:["Кухня и духовка","Стиральная машина","Инфракрасная сауна","Умная колонка"],
+      pet:"С животными — по согласованию.", priceWeekend:9200, priceNote:"−30% в будни",
+      photo:"/_blob/7d794bf6cfd535fd0e2e9e102b1aa889" },
+    { id:4, name:"Дом 4", area:"100 м²", capacity:"до 4 гостей", beds:"2 спальни",
+      amenities:["Кухня и духовка","Стиральная машина","Умная колонка","Проектор"],
+      pet:"Без животных.", priceWeekend:8200, priceNote:"−30% в будни",
+      photo:"/_blob/b96c36f03ecc3b3ae161b5b2127375a0" }
+  ];
+  var WEEKDAY_DISCOUNT = 0.3; // −30% пн–пт, по брифу
+  function priceWeekday(h){ return Math.round(h.priceWeekend * (1 - WEEKDAY_DISCOUNT) / 50) * 50; }
+  function fmtRub(n){ return new Intl.NumberFormat("ru-RU").format(n) + " ₽"; }
+  var AMENITY_ICON = {
+    "Кухня и духовка":"icon-chef-hat","Стиральная машина":"icon-washing-machine",
+    "Умная колонка":"icon-speaker-high","Проектор":"icon-projector-screen",
+    "Телевизор":"icon-television","Инфракрасная сауна":"icon-fire"
+  };
+
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+  function svgUse(id){ return '<svg class="icon"><use href="#'+id+'"/></svg>'; }
+
+  var grid = document.getElementById("housesGrid");
+  HOUSES.forEach(function(h){
+    var card = el("article", "card house-card");
+    card.innerHTML =
+      '<div class="house-photo"><img src="'+h.photo+'" alt="'+h.name+' снаружи, вид с террасой" style="width:100%;height:100%;object-fit:cover;object-position:center" loading="lazy"></div>' +
+      '<div class="house-body">' +
+        '<h3 class="house-name">'+h.name+'</h3>' +
+        '<div class="house-meta">' +
+          '<span>'+svgUse("icon-house")+h.area+'</span>' +
+          '<span>'+svgUse("icon-users")+h.capacity+'</span>' +
+          '<span>'+svgUse("icon-bed")+h.beds+'</span>' +
+        '</div>' +
+        '<div class="house-price"><b>от&nbsp;'+fmtRub(priceWeekday(h))+'&nbsp;/ сутки</b><small>'+h.priceNote+'</small></div>' +
+        '<button class="btn btn-ghost house-cta" type="button" data-open-house="'+h.id+'">Выбрать этот дом</button>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+
+  /* ---------- попап (единый шаблон, <dialog>) ---------- */
+  var dialog = document.getElementById("houseDialog");
+  var dClose = document.getElementById("dialogClose");
+  document.addEventListener("click", function(e){
+    var trigger = e.target.closest("[data-open-house]");
+    if(trigger){
+      var h = HOUSES.find(function(x){ return String(x.id)===trigger.getAttribute("data-open-house"); });
+      if(!h) return;
+      dialog.dataset.houseId = h.id;
+      var dp = document.getElementById("dialogPhoto");
+      dp.src = h.photo; dp.alt = h.name+" снаружи, вид с террасой";
+      document.getElementById("dialogName").textContent = h.name;
+      document.getElementById("dialogFacts").innerHTML =
+        '<span class="chip">'+svgUse("icon-house")+h.area+'</span>' +
+        '<span class="chip">'+svgUse("icon-users")+h.capacity+'</span>' +
+        '<span class="chip">'+svgUse("icon-bed")+h.beds+'</span>';
+      document.getElementById("dialogAmenities").innerHTML = h.amenities.map(function(a){
+        return '<li>'+svgUse(AMENITY_ICON[a]||"icon-check")+a+'</li>';
+      }).join("");
+      document.getElementById("dialogPet").innerHTML = svgUse("icon-paw-print")+" "+h.pet;
+      document.getElementById("dialogPrice").textContent = "от "+fmtRub(priceWeekday(h))+" / сутки";
+      document.getElementById("dialogPriceNote").textContent = h.priceNote;
+      dialog.showModal();
+    }
+  });
+  dClose.addEventListener("click", function(){ dialog.close(); });
+  dialog.addEventListener("click", function(e){ if(e.target===dialog) dialog.close(); });
+  document.getElementById("dialogCta").addEventListener("click", function(){
+    var id = dialog.dataset.houseId;
+    dialog.close();
+    window.dispatchEvent(new CustomEvent("ly:select-house", { detail:{ id:id } }));
+    // переход по #booking выполнится как обычная ссылка следом
+  });
+
+  /* ---------- калькулятор предварительной стоимости (демо-цены) ---------- */
+  (function(){
+    var houseSel = document.getElementById("calc-house");
+    var inEl = document.getElementById("calc-checkin");
+    var outEl = document.getElementById("calc-checkout");
+    var result = document.getElementById("calcResult");
+    if(!houseSel) return;
+
+    HOUSES.forEach(function(h){
+      var opt = document.createElement("option");
+      opt.value = h.id; opt.textContent = h.name + " — от " + fmtRub(priceWeekday(h)) + " / сутки";
+      houseSel.appendChild(opt);
+    });
+
+    function toDate(str){
+      if(!str) return null;
+      var p = str.split("-");
+      if(p.length!==3) return null;
+      return new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+    }
+    function fmtDate(d){
+      return d.toLocaleDateString("ru-RU", { day:"numeric", month:"short" });
+    }
+
+    // по умолчанию — ближайшая пятница на 2 ночи (чтобы было что показать сразу)
+    (function setDefaults(){
+      var today = new Date();
+      var d = new Date(today);
+      while(d.getDay()!==5){ d.setDate(d.getDate()+1); } // 5 = пятница
+      var out = new Date(d); out.setDate(out.getDate()+2);
+      function iso(x){ return x.toISOString().slice(0,10); }
+      inEl.value = iso(d); outEl.value = iso(out);
+      inEl.min = iso(today); outEl.min = iso(new Date(d.getTime()+86400000));
+    })();
+
+    function recalc(){
+      var h = HOUSES.find(function(x){ return String(x.id)===houseSel.value; });
+      var ci = toDate(inEl.value), co = toDate(outEl.value);
+      if(!h || !ci || !co){
+        result.innerHTML = '<p class="form-note" style="margin:0">Выберите дом и&nbsp;даты, чтобы увидеть предварительную стоимость.</p>';
+        return;
+      }
+      var nights = Math.round((co - ci) / 86400000);
+      if(nights < 1){
+        result.innerHTML = '<p class="calc-error" style="margin:0">Дата выезда должна быть позже даты заезда — минимум одна ночь.</p>';
+        return;
+      }
+      outEl.min = (function(){ var m=new Date(ci); m.setDate(m.getDate()+1); return m.toISOString().slice(0,10); })();
+
+      var weekdayNights = 0, weekendNights = 0;
+      for(var i=0;i<nights;i++){
+        var d = new Date(ci); d.setDate(d.getDate()+i);
+        var dow = d.getDay(); // 0 вс .. 6 сб
+        if(dow>=1 && dow<=5) weekdayNights++; else weekendNights++;
+      }
+      var weekdayPrice = priceWeekday(h);
+      var total = weekdayNights*weekdayPrice + weekendNights*h.priceWeekend;
+
+      var lines = "";
+      if(weekdayNights>0){
+        lines += '<div class="calc-line"><span>Будни ('+weekdayNights+' '+nightsWord(weekdayNights)+') × '+fmtRub(weekdayPrice)+'</span><span>'+fmtRub(weekdayNights*weekdayPrice)+'</span></div>';
+      }
+      if(weekendNights>0){
+        lines += '<div class="calc-line"><span>Выходные ('+weekendNights+' '+nightsWord(weekendNights)+') × '+fmtRub(h.priceWeekend)+'</span><span>'+fmtRub(weekendNights*h.priceWeekend)+'</span></div>';
+      }
+      result.innerHTML =
+        '<div class="calc-line"><span>'+h.name+', '+fmtDate(ci)+' — '+fmtDate(co)+'</span><span>'+nights+' '+nightsWord(nights)+'</span></div>' +
+        lines +
+        '<div class="calc-total"><span>Итого</span><span>'+fmtRub(total)+'</span></div>';
+    }
+
+    function nightsWord(n){
+      var n10 = n%10, n100 = n%100;
+      if(n100>=11 && n100<=14) return "ночей";
+      if(n10===1) return "ночь";
+      if(n10>=2 && n10<=4) return "ночи";
+      return "ночей";
+    }
+
+    houseSel.addEventListener("change", recalc);
+    inEl.addEventListener("change", recalc);
+    outEl.addEventListener("change", recalc);
+    window.addEventListener("ly:select-house", function(e){
+      if(!e.detail || !e.detail.id) return;
+      houseSel.value = e.detail.id;
+      recalc();
+    });
+    recalc();
+  })();
+
+  /* ---------- юридические документы (общий попап-шаблон, текст — черновик) ---------- */
+  var LEGAL_DOCS = {
+    privacy: {
+      title: "Политика обработки персональных данных",
+      html:
+        '<p style="color:var(--ink-soft);font-style:italic">Черновой текст для демонстрации сайта — перед запуском его нужно проверить с юристом и дополнить реквизитами. После переноса на&nbsp;админку этот документ редактируется там же, без участия разработчика.</p>' +
+        '<h4>1. Общие положения</h4>' +
+        '<p>Настоящая Политика определяет порядок обработки персональных данных посетителей сайта Little&nbsp;Yard (далее&nbsp;— «Сайт») и&nbsp;гостей, бронирующих дома. Используя Сайт и&nbsp;оставляя заявку на&nbsp;бронирование, вы&nbsp;соглашаетесь с&nbsp;условиями, изложенными ниже.</p>' +
+        '<h4>2. Какие данные собираются</h4>' +
+        '<p>Имя, номер телефона, выбранные даты и&nbsp;дом, комментарий к&nbsp;заявке (например, о&nbsp;животном) — то, что вы&nbsp;указываете в&nbsp;форме бронирования или форме обратной связи.</p>' +
+        '<h4>3. Цели обработки</h4>' +
+        '<p>Связь с&nbsp;вами для подтверждения бронирования, ответов на&nbsp;вопросы и&nbsp;согласования условий заезда — исключительно в&nbsp;этих целях.</p>' +
+        '<h4>4. Передача третьим лицам</h4>' +
+        '<p>Данные не&nbsp;передаются третьим лицам, за&nbsp;исключением случаев, предусмотренных законодательством РФ, или сервисов, напрямую обеспечивающих бронирование (например, сервис онлайн-оплаты, когда он&nbsp;будет подключён).</p>' +
+        '<h4>5. Хранение и&nbsp;защита</h4>' +
+        '<p>Данные хранятся в&nbsp;течение срока, необходимого для обработки заявки и&nbsp;последующей отчётности, и&nbsp;защищаются от&nbsp;несанкционированного доступа.</p>' +
+        '<h4>6. Права пользователя</h4>' +
+        '<p>Вы&nbsp;вправе запросить удаление или уточнение своих данных, написав на&nbsp;контакты, указанные в&nbsp;футере сайта.</p>' +
+        '<h4>7. Контакты оператора</h4>' +
+        '<p>Реквизиты оператора персональных данных будут указаны здесь после регистрации юридического лица/ИП.</p>'
+    },
+    offer: {
+      title: "Договор публичной оферты",
+      html:
+        '<p style="color:var(--ink-soft);font-style:italic">Черновой текст для демонстрации сайта — перед запуском его нужно проверить с юристом и дополнить реквизитами. После переноса на&nbsp;админку этот документ редактируется там же, без участия разработчика.</p>' +
+        '<h4>1. Общие положения</h4>' +
+        '<p>Настоящий документ является публичной офертой Little&nbsp;Yard (далее&nbsp;— «Исполнитель») и&nbsp;содержит условия аренды домов, расположенных на&nbsp;территории комплекса. Оплата бронирования означает согласие гостя (далее&nbsp;— «Заказчик») со&nbsp;всеми условиями оферты.</p>' +
+        '<h4>2. Предмет договора</h4>' +
+        '<p>Исполнитель предоставляет Заказчику во&nbsp;временное пользование отдельный дом на&nbsp;выбранные даты, Заказчик обязуется оплатить проживание и&nbsp;соблюдать правила, указанные в&nbsp;разделе «Условия» на&nbsp;Сайте.</p>' +
+        '<h4>3. Порядок бронирования и&nbsp;оплаты</h4>' +
+        '<p>Бронирование считается подтверждённым после согласования дат и&nbsp;получения оплаты (или предоплаты) способом, указанным при&nbsp;оформлении заявки.</p>' +
+        '<h4>4. Права и&nbsp;обязанности сторон</h4>' +
+        '<p>Исполнитель обязуется предоставить дом в&nbsp;исправном состоянии к&nbsp;заезду. Заказчик обязуется соблюдать правила проживания и&nbsp;возместить ущерб имуществу, если он&nbsp;возник по&nbsp;его вине.</p>' +
+        '<h4>5. Отмена и&nbsp;возврат средств</h4>' +
+        '<p>Условия отмены бронирования и&nbsp;возврата оплаты будут уточнены здесь при&nbsp;подключении платёжного сервиса.</p>' +
+        '<h4>6. Ответственность сторон</h4>' +
+        '<p>Стороны несут ответственность в&nbsp;соответствии с&nbsp;действующим законодательством РФ.</p>' +
+        '<h4>7. Реквизиты</h4>' +
+        '<p>Реквизиты Исполнителя будут указаны здесь после регистрации юридического лица/ИП.</p>'
+    }
+  };
+  (function(){
+    var legalDialog = document.getElementById("legalDialog");
+    var legalTitle = document.getElementById("legalTitle");
+    var legalBody = document.getElementById("legalBody");
+    var legalClose = document.getElementById("legalClose");
+    if(!legalDialog) return;
+    document.addEventListener("click", function(e){
+      var t = e.target.closest("[data-legal]");
+      if(t){
+        e.preventDefault();
+        var doc = LEGAL_DOCS[t.getAttribute("data-legal")];
+        if(!doc) return;
+        legalTitle.textContent = doc.title;
+        legalBody.innerHTML = doc.html;
+        legalDialog.showModal();
+      }
+      var s = e.target.closest("[data-social]");
+      if(s && s.getAttribute("href")==="#"){ e.preventDefault(); }
+    });
+    legalClose.addEventListener("click", function(){ legalDialog.close(); });
+    legalDialog.addEventListener("click", function(e){ if(e.target===legalDialog) legalDialog.close(); });
+  })();
+
+  /* ---------- мобильное меню ---------- */
+  var navToggle = document.getElementById("navToggle");
+  var nav = document.getElementById("primary-nav");
+  var headerEl = document.querySelector("[data-header]");
+  var headerRowEl = document.querySelector(".header-row");
+  var syncMobileHeaderH = function(){
+    // реальная высота "таблетки" шапки варьируется (отступы/скролл), поэтому полноэкранное
+    // меню должно начинаться строго под ней, а не по захардкоженному значению
+    if(headerRowEl){ document.documentElement.style.setProperty("--mobile-header-h", headerRowEl.offsetHeight + "px"); }
+  };
+  var closeNav = function(){
+    nav.removeAttribute("data-open");
+    navToggle.setAttribute("aria-expanded","false");
+    if(headerEl){ headerEl.classList.remove("nav-open"); }
+  };
+  var openNav = function(){
+    syncMobileHeaderH();
+    nav.setAttribute("data-open","");
+    navToggle.setAttribute("aria-expanded","true");
+    // класс на шапке снимает backdrop-filter с таблетки, пока меню открыто (см. комментарий в CSS) —
+    // ставим его через JS, а не :has(), чтобы не зависеть от поддержки :has() в мобильном браузере
+    if(headerEl){ headerEl.classList.add("nav-open"); }
+  };
+  navToggle.addEventListener("click", function(){
+    if(nav.hasAttribute("data-open")){ closeNav(); } else { openNav(); }
+  });
+  nav.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", closeNav);
+  });
+
+  /* ---------- шапка при скролле (плавающая поверх фото героя, сплошная после него) ---------- */
+  var header = document.querySelector("[data-header]");
+  var heroPhoto = document.querySelector(".hero .hero-photo");
+  var getHeroThreshold = function(){ return heroPhoto ? Math.max(heroPhoto.offsetHeight - 80, 40) : 8; };
+  var onScroll = function(){ header.classList.toggle("scrolled", window.scrollY > getHeroThreshold()); };
+  document.addEventListener("scroll", onScroll, { passive:true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  /* ---------- форма ---------- */
+  var form = document.getElementById("contactForm");
+  var status = document.getElementById("formStatus");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+    form.querySelectorAll("input,textarea,button").forEach(function(f){ f.disabled = true; });
+    status.innerHTML = svgUse("icon-check")+' <span class="form-success">Заявка отправлена — менеджер свяжется с вами.</span>';
+    status.classList.add("form-success");
+  });
+
+  /* ============================================================
+     Мягкие scroll-анимации, в духе residences.loamhouse.com.au
+     (тот сайт использует GSAP + ScrollTrigger + платный ScrollSmoother
+     и полноэкранные "главы" со скролл-джекингом — мы сознательно
+     не повторяем ни ScrollSmoother (платный плагин GSAP Club,
+     недоступен с открытых CDN), ни захват скролла: для сайта бронирования
+     важны обычная прокрутка, доступность и индексируемость контента.
+     Взят только сам "почерк" — мягкое появление со сдвигом, лёгким
+     блюром и инерционным ease, прямо как REV/entrance-тайминги на
+     референсе). Уважает prefers-reduced-motion. */
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!reduced && window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+    document.documentElement.classList.add("gsap-on");
+
+    gsap.utils.toArray("[data-reveal]").forEach(function(elm, i){
+      gsap.fromTo(elm,
+        { y: 36, opacity: 0, filter: "blur(6px)" },
+        { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.1, ease: "power2.out",
+          scrollTrigger: { trigger: elm, start: "top 86%", toggleActions: "play none none reverse" } });
+    });
+
+    gsap.utils.toArray(".house-card").forEach(function(card, i){
+      gsap.fromTo(card, { y: 30, opacity: 0 }, { y:0, opacity:1, duration:.9, ease:"power2.out",
+        scrollTrigger:{ trigger: card, start:"top 90%", toggleActions:"play none none reverse" }, delay: (i%3)*0.08 });
+    });
+
+    gsap.utils.toArray(".feature").forEach(function(card, i){
+      gsap.fromTo(card, { y: 24, opacity: 0 }, { y:0, opacity:1, duration:.8, ease:"power2.out",
+        scrollTrigger:{ trigger: card, start:"top 92%", toggleActions:"play none none reverse" }, delay: (i%3)*0.07 });
+    });
+
+    /* Карта: домики и точки появляются по мере прокрутки блока, как попросил клиент */
+    var markers = gsap.utils.toArray(".map-marker");
+    var mapTl = gsap.timeline({
+      scrollTrigger: { trigger: "#mapWrap", start: "top 75%", end: "bottom 55%", scrub: .6 }
+    });
+    markers.forEach(function(m, i){
+      mapTl.to(m, { opacity:1, y:0, scale:1, duration:.6, ease:"power2.out" }, i*0.35);
+    });
+  }
+})();
+</script>

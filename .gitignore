@@ -1,5 +1,11 @@
 ﻿__MACOSX/
 
+# служебные папки ИИ-инструментов — не часть проекта
+.claude/
+.agents/
+.codex/
+.impeccable/
+
 *.ogg
 oblex_job_*.png
 

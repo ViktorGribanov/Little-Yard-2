@@ -299,9 +299,29 @@
     }
   }
 
-  /* ---------- reveal ---------- */
+  /* ---------- reveal: контентные блоки (прозрачность + блюр) ---------- */
   .reveal{ opacity:1; }
-  html.gsap-on .reveal{ opacity:0; }
+  html.js-anim .reveal{
+    opacity:0; filter:blur(5px);
+    transition:opacity 1000ms cubic-bezier(.165,.84,.44,1), filter 1000ms cubic-bezier(.165,.84,.44,1);
+  }
+  html.js-anim .reveal.is-revealed{ opacity:1; filter:blur(0); }
+
+  /* ---------- reveal: заголовки h1/h2 — слово-маска + посимвольный сдвиг снизу ----------
+     Каждое слово — маска с overflow:hidden (переносы строк работают как в обычном тексте,
+     неразрывные пробелы остаются текстовыми узлами между словами). Символы внутри слова
+     анимируются независимо от блюра родительских .reveal-блоков — см. правку разметки,
+     герой/интро/будни, где текст заголовка вынесен из-под фильтра родителя. */
+  .split-heading .word{ display:inline-block; overflow:hidden; vertical-align:top; }
+  .split-heading .char{ display:inline-block; }
+  html.js-anim .split-heading .char{
+    transform:translateY(100%); opacity:0; filter:blur(5px);
+    transition:
+      transform 1600ms cubic-bezier(.19,1,.22,1),
+      opacity 1600ms cubic-bezier(.19,1,.22,1),
+      filter 1600ms cubic-bezier(.19,1,.22,1);
+  }
+  html.js-anim .split-heading.is-revealed .char{ transform:translateY(0); opacity:1; filter:blur(0); }
 
   /* ---------- intro ---------- */
   .intro-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:clamp(2rem,5vw,5rem); align-items:center; }
@@ -617,8 +637,8 @@
 
   <!-- =================== HERO =================== -->
   <section class="hero" id="top" aria-label="Главный экран">
-    <div class="hero-photo reveal" data-reveal>
-      <img src="/_blob/73b83d75cdc13d199c904965a97d726c" alt="Дома Little Yard в лесу на закате" loading="eager" width="2000" height="1125">
+    <div class="hero-photo">
+      <img class="reveal" data-reveal src="/_blob/73b83d75cdc13d199c904965a97d726c" alt="Дома Little Yard в лесу на закате" loading="eager" width="2000" height="1125">
       <div class="hero-scrim" aria-hidden="true"></div>
       <div class="wrap hero-copy">
         <h1>Ваши дни за&nbsp;городом</h1>
@@ -639,9 +659,9 @@
   <!-- =================== ИНТРО =================== -->
   <section class="band" aria-label="О месте">
     <div class="wrap intro-grid">
-      <div class="reveal" data-reveal>
+      <div>
         <h2 class="title">Четыре дома на&nbsp;одном тихом участке</h2>
-        <p class="lede">Мы сдаём дома сами, без управляющей компании,&nbsp;— поэтому можем ответить на&nbsp;любой вопрос лично. Все дома стоят на&nbsp;одной благоустроенной территории: общий въезд, общая охрана, у&nbsp;каждого&nbsp;— свой участок и&nbsp;вход. Пятый дом сейчас строится и&nbsp;пока не&nbsp;сдаётся.</p>
+        <p class="lede reveal" data-reveal>Мы сдаём дома сами, без управляющей компании,&nbsp;— поэтому можем ответить на&nbsp;любой вопрос лично. Все дома стоят на&nbsp;одной благоустроенной территории: общий въезд, общая охрана, у&nbsp;каждого&nbsp;— свой участок и&nbsp;вход. Пятый дом сейчас строится и&nbsp;пока не&nbsp;сдаётся.</p>
       </div>
       <div class="intro-mosaic reveal" data-reveal aria-label="Четыре дома на участке">
         <div class="m-item"><img src="/_blob/3a86af97b4d3fa12036d54c0ffc97c04" alt="Дом 1" loading="lazy"><span>Дом 1</span></div>
@@ -665,10 +685,10 @@
   <!-- =================== БУДНИ / УДАЛЁНКА =================== -->
   <section class="band" id="weekdays" aria-label="Будни и удалённая работа">
     <div class="wrap weekday-grid">
-      <div class="reveal" data-reveal>
+      <div>
         <h2 class="title">Можно работать, а&nbsp;не&nbsp;только отдыхать</h2>
-        <p class="lede">Во&nbsp;всех домах проведён кабельный оптоволоконный интернет&nbsp;— он&nbsp;не&nbsp;зависит от&nbsp;погоды и&nbsp;мобильной сети, этого достаточно для видеозвонков и&nbsp;полноценной удалённой работы.</p>
-        <div class="stat-row">
+        <p class="lede reveal" data-reveal>Во&nbsp;всех домах проведён кабельный оптоволоконный интернет&nbsp;— он&nbsp;не&nbsp;зависит от&nbsp;погоды и&nbsp;мобильной сети, этого достаточно для видеозвонков и&nbsp;полноценной удалённой работы.</p>
+        <div class="stat-row reveal" data-reveal>
           <div class="stat"><b>−30%</b><span>Скидка пн–пт</span></div>
           <div class="stat"><b>24/7</b><span>Оптоволокно без обрывов</span></div>
           <div class="stat"><b>0</b><span>Причин покидать территорию</span></div>
@@ -1258,38 +1278,17 @@
   });
 
   /* ============================================================
-     Мягкие scroll-анимации, в духе residences.loamhouse.com.au
-     (тот сайт использует GSAP + ScrollTrigger + платный ScrollSmoother
-     и полноэкранные "главы" со скролл-джекингом — мы сознательно
-     не повторяем ни ScrollSmoother (платный плагин GSAP Club,
-     недоступен с открытых CDN), ни захват скролла: для сайта бронирования
-     важны обычная прокрутка, доступность и индексируемость контента.
-     Взят только сам "почерк" — мягкое появление со сдвигом, лёгким
-     блюром и инерционным ease, прямо как REV/entrance-тайминги на
-     референсе). Уважает prefers-reduced-motion. */
+     Карта: домики и точки появляются по мере прокрутки блока —
+     единственное место, где нужна именно scrub-анимация, привязанная
+     к прокрутке самого блока (просьба клиента), поэтому она и дальше
+     сделана на GSAP + ScrollTrigger (без платного ScrollSmoother и без
+     полноэкранного скролл-джекинга — см. исходное обоснование ниже).
+  ============================================================ */
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(!reduced && window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
     document.documentElement.classList.add("gsap-on");
 
-    gsap.utils.toArray("[data-reveal]").forEach(function(elm, i){
-      gsap.fromTo(elm,
-        { y: 36, opacity: 0, filter: "blur(6px)" },
-        { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.1, ease: "power2.out",
-          scrollTrigger: { trigger: elm, start: "top 86%", toggleActions: "play none none reverse" } });
-    });
-
-    gsap.utils.toArray(".house-card").forEach(function(card, i){
-      gsap.fromTo(card, { y: 30, opacity: 0 }, { y:0, opacity:1, duration:.9, ease:"power2.out",
-        scrollTrigger:{ trigger: card, start:"top 90%", toggleActions:"play none none reverse" }, delay: (i%3)*0.08 });
-    });
-
-    gsap.utils.toArray(".feature").forEach(function(card, i){
-      gsap.fromTo(card, { y: 24, opacity: 0 }, { y:0, opacity:1, duration:.8, ease:"power2.out",
-        scrollTrigger:{ trigger: card, start:"top 92%", toggleActions:"play none none reverse" }, delay: (i%3)*0.07 });
-    });
-
-    /* Карта: домики и точки появляются по мере прокрутки блока, как попросил клиент */
     var markers = gsap.utils.toArray(".map-marker");
     var mapTl = gsap.timeline({
       scrollTrigger: { trigger: "#mapWrap", start: "top 75%", end: "bottom 55%", scrub: .6 }
@@ -1297,6 +1296,110 @@
     markers.forEach(function(m, i){
       mapTl.to(m, { opacity:1, y:0, scale:1, duration:.6, ease:"power2.out" }, i*0.35);
     });
+  }
+
+  /* ============================================================
+     Мягкое появление контента при скролле + посимвольная анимация
+     заголовков h1/h2. Сделано на чистом IntersectionObserver +
+     CSS-transition (без GSAP) — так проще выдержать точные тайминги/
+     easing по ТЗ, не тянуть платный SplitText и не зависеть от того,
+     загрузился ли GSAP с CDN.
+
+     Контент (.reveal): opacity 0→1 + blur(5px→0), 1000 мс,
+     cubic-bezier(.165,.84,.44,1), без сдвига/масштаба.
+
+     Заголовки (.split-heading): текст разбит на слова (каждое — маска
+     overflow:hidden, переносы строк и неразрывные пробелы между словами
+     сохранены как обычные текстовые узлы) и символы внутри слова;
+     символ: translateY(100%)+opacity:0+blur(5px) → исходное состояние,
+     1600 мс, cubic-bezier(.19,1,.22,1), шаг 50 мс — отсчёт свой в каждом
+     слове, слова стартуют одновременно. Полный текст заголовка остаётся
+     доступен скринридеру через aria-label, декоративные span'ы скрыты
+     aria-hidden. Заголовки нигде не вложены в блюрящийся .reveal-родитель
+     (см. правки разметки в hero/интро/будни) — блюр контента и заголовка
+     не смешиваются.
+
+     Запуск — один раз на элемент: как только видно 25% элемента, либо
+     (доп. условие для блоков выше экрана) когда верх элемента достиг 80%
+     высоты viewport — смотря что раньше; оба случая реализованы двумя
+     IntersectionObserver (стандартный threshold и rootMargin, сокращающий
+     область снизу на 20%). IntersectionObserver сам сообщает исходное
+     состояние при вызове observe() — поэтому то, что уже в зоне запуска
+     при загрузке, анимируется сразу, без отдельного кода. Про запуск
+     ничего не прячем обратно при скролле вверх (unobserve после первого
+     срабатывания). Ждём document.fonts.ready перед разбивкой/измерением,
+     чтобы метрики текста были финальными. Без JS или при
+     prefers-reduced-motion класс js-anim не добавляется — весь текст
+     и фото остаются видны как обычно. */
+  if(!reduced && "IntersectionObserver" in window){
+    var startContentAnim = function(){
+      document.documentElement.classList.add("js-anim");
+
+      /* ---- заголовки: слова-маски + посимвольный сдвиг снизу ---- */
+      var headings = Array.prototype.slice.call(document.querySelectorAll("h1, h2"));
+      headings.forEach(function(h){
+        var text = h.textContent;
+        h.setAttribute("aria-label", text.replace(/ /g, " "));
+        h.classList.add("split-heading");
+        h.textContent = "";
+        var tokens = text.match(/\s+|\S+/g) || [];
+        tokens.forEach(function(tok){
+          if(/^\s/.test(tok)){
+            h.appendChild(document.createTextNode(tok));
+            return;
+          }
+          var word = document.createElement("span");
+          word.className = "word";
+          word.setAttribute("aria-hidden", "true");
+          Array.from(tok).forEach(function(ch, i){
+            var charSpan = document.createElement("span");
+            charSpan.className = "char";
+            charSpan.style.transitionDelay = (i * 50) + "ms";
+            charSpan.textContent = ch;
+            word.appendChild(charSpan);
+          });
+          h.appendChild(word);
+        });
+      });
+
+      /* ---- контентные блоки ---- */
+      var contentEls = Array.prototype.slice.call(document.querySelectorAll("[data-reveal], .house-card"));
+      contentEls.forEach(function(e){ e.classList.add("reveal"); });
+
+      var targets = headings.concat(contentEls);
+      var revealed = new WeakSet();
+
+      function reveal(elm){
+        if(revealed.has(elm)) return;
+        revealed.add(elm);
+        elm.classList.add("is-revealed");
+        io25.unobserve(elm);
+        io80.unobserve(elm);
+      }
+
+      /* триггер №1: видно 25% элемента */
+      var io25 = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting) reveal(entry.target);
+        });
+      }, { threshold: 0.25 });
+
+      /* триггер №2 (доп., для элементов выше экрана): верх достиг 80%
+         высоты viewport — зона наблюдения снизу сокращена на 20% */
+      var io80 = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting) reveal(entry.target);
+        });
+      }, { threshold: 0, rootMargin: "0px 0px -20% 0px" });
+
+      targets.forEach(function(t){ io25.observe(t); io80.observe(t); });
+    };
+
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(startContentAnim).catch(startContentAnim);
+    } else {
+      startContentAnim();
+    }
   }
 })();
 </script>

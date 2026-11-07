@@ -1,0 +1,207 @@
+---
+import site from '../data/site.json';
+import faq from '../data/faq.json';
+import sprite from '../components/_icon-sprite.html?raw';
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const lodging = {
+  '@context': 'https://schema.org',
+  '@type': 'LodgingBusiness',
+  name: site.brand,
+  description: site.seo.description,
+  url: canonical.href,
+  image: new URL(site.seo.ogImage, Astro.site).href,
+  priceRange: 'уточняется',
+  amenityFeature: [
+    { '@type': 'LocationFeatureSpecification', name: 'Оптоволоконный интернет', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Парковка 3 места у каждого дома', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Огороженная территория с видеонаблюдением', value: true },
+    { '@type': 'LocationFeatureSpecification', name: 'Детская площадка', value: true },
+  ],
+};
+
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.items.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
+
+const { brand, nav, headerCta, contacts, footer } = site;
+---
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.seo.title}</title>
+    <meta name="description" content={site.seo.description} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href={canonical.href} />
+    <meta name="robots" content="index,follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={brand} />
+    <meta property="og:title" content={site.seo.title} />
+    <meta property="og:description" content={site.seo.description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={new URL(site.seo.ogImage, Astro.site).href} />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@300;400;500;600&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(lodging)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqPage)} />
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <Fragment set:html={sprite} />
+
+    <header data-header>
+      <div class="wrap">
+        <div class="header-row">
+          <a class="brand" href="#top">{brand}</a>
+          <nav class="primary-nav" id="primary-nav">
+            {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+          </nav>
+          <div class="header-actions">
+            <a class="btn btn-primary btn-sm" href={headerCta.href}>
+              <span>{headerCta.label}</span>
+              <svg class="icon"><use href="#icon-calendar-blank" /></svg>
+            </a>
+            <button
+              class="nav-toggle"
+              id="navToggle"
+              aria-expanded="false"
+              aria-controls="primary-nav"
+              aria-label="Открыть меню"
+            >
+              <svg class="icon icon-lg"><use href="#icon-caret-down" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div class="footer-grid">
+          <div>
+            <p class="brand" style="margin-bottom:.6em">{brand}</p>
+            <p class="lede" style="font-size:.95rem">{footer.tagline}</p>
+          </div>
+          <div>
+            <h4>Навигация</h4>
+            <ul>
+              {nav.slice(0, 4).map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            </ul>
+          </div>
+          <div>
+            <h4>Контакты</h4>
+            <ul>
+              <li>
+                <svg class="icon" style="display:inline;vertical-align:-2px;margin-right:.4em">
+                  <use href="#icon-phone" />
+                </svg>
+                <a href={contacts.phoneHref}>{contacts.phone}</a>
+              </li>
+              <li>
+                <svg class="icon" style="display:inline;vertical-align:-2px;margin-right:.4em">
+                  <use href="#icon-map-pin" />
+                </svg>
+                {contacts.address}
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4>Мы в&nbsp;соцсетях</h4>
+            <div class="social-list">
+              {contacts.socials.map((s) => (
+                <a class="social-link" href={s.href} aria-label={s.label} data-social={s.network}>
+                  <svg class="icon"><use href={`#${s.icon}`} /></svg>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>{footer.copyright} Прототип Phase&nbsp;1 — визуальный макет для согласования. Концепция «Тихий дом».</span>
+          <nav class="footer-legal" aria-label="Юридическая информация">
+            {footer.legal.map((doc) => (
+              <button type="button" class="legal-link" data-legal={doc.id}>{doc.label}</button>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </footer>
+
+    <dialog class="legal-dialog" id="legalDialog">
+      <div class="legal-scroll">
+        <div class="legal-head">
+          <h3 id="legalTitle"></h3>
+          <button class="dialog-close" id="legalClose" aria-label="Закрыть">
+            <svg class="icon icon-lg"><use href="#icon-x" /></svg>
+          </button>
+        </div>
+        <div class="legal-body" id="legalBody"></div>
+      </div>
+    </dialog>
+
+    <dialog class="house-dialog" id="houseDialog">
+      <div class="dialog-scroll">
+        <div class="dialog-head">
+          <button class="dialog-close" id="dialogClose" aria-label="Закрыть">
+            <svg class="icon icon-lg"><use href="#icon-x" /></svg>
+          </button>
+          <img
+            id="dialogPhoto"
+            src=""
+            alt=""
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center"
+          />
+        </div>
+        <div class="dialog-body">
+          <div class="dialog-top">
+            <h3 id="dialogName"></h3>
+            <div class="dialog-facts" id="dialogFacts"></div>
+          </div>
+          <ul class="dialog-amenities" id="dialogAmenities"></ul>
+          <p class="dialog-pet" id="dialogPet"></p>
+          <div class="dialog-foot">
+            <div>
+              <b id="dialogPrice" style="font-size:1.3rem"></b>
+              <span class="form-note" id="dialogPriceNote"></span>
+            </div>
+            <a class="btn btn-primary" href="#booking" id="dialogCta">
+              Забронировать<svg class="icon"><use href="#icon-arrow-right" /></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <script>
+      import '../scripts/site.js';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

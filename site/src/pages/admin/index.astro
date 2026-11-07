@@ -1,0 +1,18 @@
+---
+// Admin UI. Kept as an Astro page (not a public/ file) so that /admin/ resolves
+// in the dev server too, not only in the built output.
+// Config lives next to it: public/admin/config.yml → served as /admin/config.yml.
+---
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Little Yard — админка</title>
+  </head>
+  <body>
+    <script is:inline src="https://unpkg.com/decap-cms@^3.6.0/dist/decap-cms.js"></script>
+  </body>
+</html>

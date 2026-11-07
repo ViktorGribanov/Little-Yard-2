@@ -1,0 +1,372 @@
+# Конфигурация админки Little Yard.
+#
+# Файлы контента — те же JSON, которые импортирует сайт (src/data/*.json),
+# поэтому сохранение в админке меняет ровно то, что видно на странице.
+#
+# Вход:
+#   локально  — `npm run cms` поднимает decap-server, входа не требуется;
+#   на сервере — GitHub OAuth через Cloudflare Worker (см. docs/CMS.md).
+
+backend:
+  name: github
+  repo: little-yard/little-yard          # заменить на реальный репозиторий
+  branch: main
+  base_url: https://little-yard-oauth.example.workers.dev   # адрес Worker-прокси
+  auth_endpoint: auth
+
+# Пока репозиторий и OAuth не настроены, админка работает локально:
+# правки пишутся прямо в файлы проекта.
+local_backend: true
+
+# Медиатека: загруженные фото попадают в public/images/uploads и на сайт
+# отдаются по адресу /images/uploads/<файл>.
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+collections:
+  - name: houses
+    label: Дома
+    label_singular: Дом
+    description: Карточки домов и их содержимое в попапе. Пятый дом добавляется здесь же.
+    files:
+      - name: houses
+        label: Список домов
+        file: src/data/houses.json
+        format: json
+        fields:
+          - name: houses
+            label: Дома
+            label_singular: Дом
+            widget: list
+            summary: "{{fields.name}} — {{fields.areaLabel}}"
+            fields:
+              - { name: name, label: Название, widget: string }
+              - { name: slug, label: Идентификатор (slug), widget: string, hint: "house-1, house-2 …" }
+              - name: status
+                label: Статус
+                widget: select
+                options:
+                  - { label: "Доступен для брони", value: bookable }
+                  - { label: "Скоро / строится", value: coming-soon }
+                  - { label: "Скрыт", value: hidden }
+              - { name: area, label: "Площадь, м²", widget: number, value_type: int, min: 1 }
+              - { name: areaLabel, label: "Площадь (как на карточке)", widget: string, hint: "90 м²" }
+              - { name: capacity, label: "Вместимость, гостей", widget: number, value_type: int, min: 1, max: 8 }
+              - { name: capacityLabel, label: "Вместимость (как на карточке)", widget: string, hint: "до 4 гостей" }
+              - { name: bedrooms, label: "Спален", widget: number, value_type: int, min: 0 }
+              - { name: beds, label: "Кровати (как на карточке)", widget: string, hint: "2 спальни" }
+              - name: amenities
+                label: Удобства
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - name: key
+                    label: Ключ
+                    widget: select
+                    options:
+                      - { label: Кухня, value: kitchen }
+                      - { label: Духовка, value: oven }
+                      - { label: Микроволновка, value: microwave }
+                      - { label: Фильтрованная вода, value: fridge-filtered }
+                      - { label: Стиральная машина, value: washing-machine }
+                      - { label: Умная колонка, value: smart-speaker }
+                      - { label: Телевизор, value: tv }
+                      - { label: Проектор, value: projector }
+                      - { label: Инфракрасная сауна, value: sauna-infrared }
+                      - { label: Детская кроватка, value: crib }
+                  - { name: label, label: Подпись, widget: string }
+                  - name: icon
+                    label: Иконка
+                    widget: select
+                    options:
+                      - { label: Кухня, value: icon-chef-hat }
+                      - { label: Стирка, value: icon-washing-machine }
+                      - { label: Колонка, value: icon-speaker-high }
+                      - { label: Проектор, value: icon-projector-screen }
+                      - { label: Телевизор, value: icon-television }
+                      - { label: Сауна, value: icon-fire }
+              - name: petPolicy
+                label: Питомцы
+                widget: select
+                options:
+                  - { label: По согласованию, value: approval }
+                  - { label: Можно, value: allowed }
+                  - { label: Нельзя, value: not-allowed }
+              - { name: petNote, label: "Текст про питомцев", widget: string, hint: "С животными — по согласованию." }
+              - { name: priceWeekend, label: "Цена за выходные, ₽", widget: number, value_type: int, min: 0 }
+              - { name: minNights, label: "Минимум ночей", widget: number, value_type: int, min: 1, default: 1 }
+              - { name: photo, label: Фото, widget: image }
+              - { name: photoAlt, label: "Описание фото (alt)", widget: string }
+
+  - name: site
+    label: Сайт
+    description: Название, первый экран, меню, контакты, подвал и SEO.
+    files:
+      - name: settings
+        label: Настройки сайта
+        file: src/data/site.json
+        format: json
+        fields:
+          - { name: brand, label: Название бренда, widget: string }
+          - name: hero
+            label: Первый экран
+            widget: object
+            fields:
+              - { name: headline, label: Заголовок, widget: string }
+              - { name: description, label: Описание, widget: text }
+              - name: facts
+                label: "Короткие факты (3 штуки)"
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: label, label: Текст, widget: string }
+                  - { name: icon, label: Иконка, widget: string, hint: "icon-house, icon-bed, icon-wifi-high" }
+              - { name: photo, label: Фото, widget: image }
+              - { name: photoAlt, label: "Описание фото (alt)", widget: string }
+              - name: primaryCta
+                label: Основная кнопка
+                widget: object
+                fields:
+                  - { name: label, label: Текст, widget: string }
+                  - { name: href, label: Ссылка, widget: string }
+              - name: secondaryCta
+                label: Вторая кнопка
+                widget: object
+                fields:
+                  - { name: label, label: Текст, widget: string }
+                  - { name: href, label: Ссылка, widget: string }
+          - name: nav
+            label: Меню
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Текст, widget: string }
+              - { name: href, label: Якорь, widget: string }
+          - name: headerCta
+            label: Кнопка в шапке
+            widget: object
+            fields:
+              - { name: label, label: Текст, widget: string }
+              - { name: href, label: Ссылка, widget: string }
+          - name: contacts
+            label: Контакты
+            widget: object
+            fields:
+              - { name: phone, label: Телефон, widget: string }
+              - { name: phoneHref, label: "Телефон для звонка (tel:)", widget: string }
+              - { name: email, label: E-mail, widget: string }
+              - { name: address, label: Адрес, widget: string }
+              - { name: mapUrl, label: Ссылка на карту, widget: string }
+              - name: socials
+                label: Соцсети
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: network, label: Сеть, widget: string }
+                  - { name: label, label: Подпись, widget: string }
+                  - { name: icon, label: Иконка, widget: string }
+                  - { name: href, label: Ссылка, widget: string }
+          - name: footer
+            label: Подвал
+            widget: object
+            fields:
+              - { name: tagline, label: Описание, widget: text }
+              - { name: copyright, label: "Копирайт", widget: string }
+              - name: legal
+                label: Юридические документы
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: "Ключ (privacy / offer)", widget: string }
+                  - { name: label, label: Подпись, widget: string }
+          - name: seo
+            label: SEO
+            widget: object
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: description, label: Description, widget: text }
+              - { name: ogImage, label: "Картинка для соцсетей", widget: image }
+          - name: booking
+            label: Бронирование
+            widget: object
+            fields:
+              - { name: weekdayDiscount, label: "Скидка в будни (0.3 = 30%)", widget: number, value_type: float, min: 0, max: 1 }
+
+  - name: sections
+    label: Тексты секций
+    description: Заголовки, описания и списки внутри блоков страницы.
+    files:
+      - name: sections
+        label: Секции
+        file: src/data/sections.json
+        format: json
+        fields:
+          - name: intro
+            label: "Интро: четыре дома"
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: lede, label: Текст, widget: text }
+          - name: houses
+            label: "Блок «Дома»"
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: lede, label: Текст, widget: text }
+          - name: weekdays
+            label: "Будни и удалённая работа"
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: lede, label: Текст, widget: text }
+              - name: stats
+                label: Цифры
+                widget: list
+                summary: "{{fields.value}} — {{fields.label}}"
+                fields:
+                  - { name: value, label: Значение, widget: string }
+                  - { name: label, label: Подпись, widget: string }
+              - name: card
+                label: Карточка «Что это даёт»
+                widget: object
+                fields:
+                  - { name: title, label: Заголовок, widget: string }
+                  - name: items
+                    label: Пункты
+                    widget: list
+                    summary: "{{fields.text}}"
+                    fields:
+                      - { name: icon, label: Иконка, widget: string }
+                      - { name: text, label: Текст, widget: string }
+          - name: territory
+            label: Территория
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: lede, label: Текст, widget: text }
+              - { name: photo, label: Фото, widget: image }
+              - { name: photoAlt, label: "Описание фото (alt)", widget: string }
+              - name: features
+                label: Удобства
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: icon, label: Иконка, widget: string }
+                  - { name: title, label: Название, widget: string }
+                  - { name: text, label: Текст, widget: text }
+          - name: kids
+            label: "Дети и питомцы"
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: photo, label: Фото, widget: image }
+              - { name: photoAlt, label: "Описание фото (alt)", widget: string }
+              - name: features
+                label: Пункты
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: icon, label: Иконка, widget: string }
+                  - { name: title, label: Название, widget: string }
+                  - { name: text, label: Текст, widget: text }
+          - name: map
+            label: "Карта и окрестности"
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: lede, label: Текст, widget: text }
+              - { name: photo, label: Фото, widget: image }
+              - { name: photoAlt, label: "Описание фото (alt)", widget: string }
+              - name: pins
+                label: Метки на карте
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: id, label: Идентификатор, widget: string }
+                  - { name: label, label: Подпись, widget: string }
+                  - { name: left, label: "Позиция по горизонтали, %", widget: string }
+                  - { name: top, label: "Позиция по вертикали, %", widget: string }
+                  - { name: alt, label: "Другой цвет метки", widget: boolean, required: false }
+              - name: legend
+                label: Легенда
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: label, label: Подпись, widget: string }
+                  - { name: alt, label: "Другой цвет", widget: boolean, required: false }
+              - name: route
+                label: "Маршрут"
+                widget: list
+                summary: "{{fields.value}}"
+                fields:
+                  - { name: icon, label: Иконка, widget: string }
+                  - { name: value, label: Значение, widget: string }
+                  - { name: text, label: Текст, widget: string }
+              - { name: routeCta, label: "Кнопка маршрута", widget: string }
+              - name: nearby
+                label: "Что рядом"
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: icon, label: Иконка, widget: string }
+                  - { name: title, label: Название, widget: string }
+                  - { name: time, label: Время, widget: string }
+          - name: rules
+            label: "Цены и правила"
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - name: terms
+                label: Условия
+                widget: list
+                summary: "{{fields.term}} — {{fields.value}}"
+                fields:
+                  - { name: term, label: Пункт, widget: string }
+                  - { name: value, label: Значение, widget: string }
+              - name: items
+                label: Правила
+                widget: list
+                summary: "{{fields.text}}"
+                fields:
+                  - { name: icon, label: Иконка, widget: string }
+                  - { name: text, label: Текст, widget: string }
+          - name: booking
+            label: Бронирование
+            widget: object
+            fields:
+              - { name: title, label: Заголовок, widget: string }
+              - { name: lede, label: Текст, widget: text }
+              - { name: calcTitle, label: "Заголовок калькулятора", widget: string }
+              - { name: calcHouseLabel, label: "Поле «Дом»", widget: string }
+              - { name: calcCheckinLabel, label: "Поле «Заезд»", widget: string }
+              - { name: calcCheckoutLabel, label: "Поле «Выезд»", widget: string }
+              - { name: calcHint, label: "Подсказка калькулятора", widget: string }
+              - { name: calcNote, label: "Примечание к ценам", widget: text }
+              - name: form
+                label: Форма заявки
+                widget: object
+                fields:
+                  - { name: name, label: "Поле «Имя»", widget: string }
+                  - { name: phone, label: "Поле «Телефон»", widget: string }
+                  - { name: comment, label: "Поле «Комментарий»", widget: string }
+                  - { name: commentPlaceholder, label: "Подсказка в комментарии", widget: string }
+                  - { name: pet, label: "Галочка «с питомцем»", widget: string }
+                  - { name: submit, label: "Кнопка", widget: string }
+                  - { name: status, label: "Текст под кнопкой", widget: text }
+
+  - name: faq
+    label: Частые вопросы
+    files:
+      - name: faq
+        label: FAQ
+        file: src/data/faq.json
+        format: json
+        fields:
+          - { name: title, label: Заголовок блока, widget: string }
+          - name: items
+            label: Вопросы
+            widget: list
+            summary: "{{fields.question}}"
+            fields:
+              - { name: question, label: Вопрос, widget: string }
+              - { name: answer, label: Ответ, widget: text }

@@ -1,0 +1,52 @@
+{
+  "brand": "Little Yard",
+  "hero": {
+    "headline": "Ваши дни за городом",
+    "description": "Отдельный дом для жизни в своём ритме. Приезжайте на выходные или останьтесь среди недели — с семьёй, работой и привычными удобствами.",
+    "facts": [
+      { "label": "Дом целиком", "icon": "icon-house" },
+      { "label": "Две спальни", "icon": "icon-bed" },
+      { "label": "Оптоволоконный интернет", "icon": "icon-wifi-high" }
+    ],
+    "photo": "/images/hero.webp",
+    "photoAlt": "Дома Little Yard в лесу на закате",
+    "primaryCta": { "label": "Выбрать дом", "href": "#houses" },
+    "secondaryCta": { "label": "Что на территории", "href": "#territory" }
+  },
+  "nav": [
+    { "label": "Дома", "href": "#houses" },
+    { "label": "Будни", "href": "#weekdays" },
+    { "label": "Территория", "href": "#territory" },
+    { "label": "Условия", "href": "#rules" },
+    { "label": "Как добраться", "href": "#route" }
+  ],
+  "headerCta": { "label": "Узнать свободные даты", "href": "#booking" },
+  "contacts": {
+    "phone": "+7 (000) 000-00-00",
+    "phoneHref": "tel:+70000000000",
+    "email": "hello@little-yard.example",
+    "address": "Адрес уточняется",
+    "mapUrl": "https://yandex.ru/maps/?rtext=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0~Little%20Yard&rtt=auto",
+    "socials": [
+      { "network": "youtube", "label": "YouTube", "icon": "icon-youtube-logo", "href": "#" },
+      { "network": "telegram", "label": "Telegram", "icon": "icon-telegram-logo", "href": "#" },
+      { "network": "instagram", "label": "Instagram", "icon": "icon-instagram-logo", "href": "#" }
+    ]
+  },
+  "footer": {
+    "tagline": "Четыре загородных дома на одном тихом участке. Без управляющей компании — хозяин на связи лично.",
+    "copyright": "© 2026 Little Yard.",
+    "legal": [
+      { "id": "privacy", "label": "Политика обработки данных" },
+      { "id": "offer", "label": "Договор оферты" }
+    ]
+  },
+  "seo": {
+    "title": "Little Yard — четыре загородных дома для жизни в своём ритме",
+    "description": "Отдельные дома на одном тихом участке: оптоволоконный интернет, территория с мангалом и кафе, скидка в будни. Бронирование напрямую у хозяина.",
+    "ogImage": "/images/hero.webp"
+  },
+  "booking": {
+    "weekdayDiscount": 0.3
+  }
+}

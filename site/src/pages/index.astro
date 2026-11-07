@@ -1,0 +1,344 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../data/site.json';
+import housesData from '../data/houses.json';
+
+const houses = housesData.houses;
+import sections from '../data/sections.json';
+import faq from '../data/faq.json';
+
+const { hero, booking: bookingSettings } = site;
+const { intro, houses: housesSection, weekdays, territory, kids, map, rules, booking } = sections;
+
+const bookable = houses.filter((h) => h.status === 'bookable');
+
+// The same records drive the server-rendered cards and the client-side popup /
+// calculator, so a house can never say one thing on the card and another in the
+// dialog.
+const housesPayload = bookable.map((h, index) => ({
+  id: index + 1,
+  name: h.name,
+  area: h.areaLabel,
+  capacity: h.capacityLabel,
+  beds: h.beds,
+  amenities: h.amenities.map((a) => a.label),
+  pet: h.petNote,
+  priceWeekend: h.priceWeekend,
+  priceNote: '−30% в будни',
+  photo: h.photo,
+}));
+
+const fmtRub = (value) =>
+  new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
+const weekdayPrice = (value) =>
+  Math.round((value * (1 - bookingSettings.weekdayDiscount)) / 50) * 50;
+---
+
+<BaseLayout>
+  <script type="application/json" id="houses-data" set:html={JSON.stringify(housesPayload)} />
+
+  <!-- =================== HERO =================== -->
+  <section class="hero" id="top" aria-label="Главный экран">
+    <div class="hero-photo">
+      <img
+        class="reveal"
+        data-reveal
+        src={hero.photo}
+        alt={hero.photoAlt}
+        loading="eager"
+        width="1600"
+        height="900"
+      />
+      <div class="hero-scrim" aria-hidden="true"></div>
+      <div class="wrap hero-copy">
+        <h1>{hero.headline}</h1>
+        <p class="hero-desc">{hero.description}</p>
+        <div class="quick-facts">
+          {hero.facts.map((fact) => (
+            <span class="chip">
+              <svg class="icon"><use href={`#${fact.icon}`} /></svg>
+              {fact.label}
+            </span>
+          ))}
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={hero.primaryCta.href}>
+            {hero.primaryCta.label}<svg class="icon"><use href="#icon-arrow-right" /></svg>
+          </a>
+          <a class="btn btn-ghost" href={hero.secondaryCta.href}>{hero.secondaryCta.label}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ИНТРО =================== -->
+  <section class="band" aria-label="О месте">
+    <div class="wrap intro-grid">
+      <div>
+        <h2 class="title">{intro.title}</h2>
+        <p class="lede reveal" data-reveal>{intro.lede}</p>
+      </div>
+      <div class="intro-mosaic reveal" data-reveal aria-label="Четыре дома на участке">
+        {bookable.map((house) => (
+          <div class="m-item">
+            <img src={house.photo} alt={house.name} loading="lazy" />
+            <span>{house.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ДОМА =================== -->
+  <section class="band" id="houses" aria-label="Дома">
+    <div class="wrap">
+      <h2 class="title">{housesSection.title}</h2>
+      <p class="lede">{housesSection.lede}</p>
+
+      <div class="houses-grid" id="housesGrid">
+        {bookable.map((house, index) => (
+          <article class="card house-card">
+            <div class="house-photo">
+              <img
+                src={house.photo}
+                alt={house.photoAlt}
+                style="width:100%;height:100%;object-fit:cover;object-position:center"
+                loading="lazy"
+              />
+            </div>
+            <div class="house-body">
+              <h3 class="house-name">{house.name}</h3>
+              <div class="house-meta">
+                <span><svg class="icon"><use href="#icon-house" /></svg>{house.areaLabel}</span>
+                <span><svg class="icon"><use href="#icon-users" /></svg>{house.capacityLabel}</span>
+                <span><svg class="icon"><use href="#icon-bed" /></svg>{house.beds}</span>
+              </div>
+              <div class="house-price">
+                <b>от&nbsp;{fmtRub(weekdayPrice(house.priceWeekend))}&nbsp;/ сутки</b>
+                <small>−30% в будни</small>
+              </div>
+              <button class="btn btn-ghost house-cta" type="button" data-open-house={index + 1}>
+                Выбрать этот дом
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== БУДНИ / УДАЛЁНКА =================== -->
+  <section class="band" id="weekdays" aria-label="Будни и удалённая работа">
+    <div class="wrap weekday-grid">
+      <div>
+        <h2 class="title">{weekdays.title}</h2>
+        <p class="lede reveal" data-reveal>{weekdays.lede}</p>
+        <div class="stat-row reveal" data-reveal>
+          {weekdays.stats.map((stat) => (
+            <div class="stat"><b>{stat.value}</b><span>{stat.label}</span></div>
+          ))}
+        </div>
+      </div>
+      <div class="card weekday-card reveal" data-reveal>
+        <h3 style="font-size:1.05rem;font-weight:500;margin-bottom:.9em">{weekdays.card.title}</h3>
+        <ul>
+          {weekdays.card.items.map((item) => (
+            <li>
+              <svg class="icon icon-lg"><use href={`#${item.icon}`} /></svg>
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ТЕРРИТОРИЯ =================== -->
+  <section class="band" id="territory" aria-label="Территория и удобства">
+    <div class="wrap">
+      <div class="territory-layout">
+        <div class="territory-text">
+          <h2 class="title">{territory.title}</h2>
+          <p class="lede">{territory.lede}</p>
+          <div class="feature-grid">
+            {territory.features.map((feature) => (
+              <div class="feature reveal" data-reveal>
+                <span class="icon-wrap"><svg class="icon icon-lg"><use href={`#${feature.icon}`} /></svg></span>
+                <h3>{feature.title}</h3>
+                <p>{feature.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <figure class="territory-photo reveal" data-reveal>
+          <img src={territory.photo} alt={territory.photoAlt} loading="lazy" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== ДЕТИ И ПИТОМЦЫ =================== -->
+  <section class="band" aria-label="Дети и питомцы">
+    <div class="wrap">
+      <div class="territory-layout">
+        <div class="territory-text">
+          <h2 class="title">{kids.title}</h2>
+          <div class="feature-list">
+            {kids.features.map((feature) => (
+              <div class="feature reveal" data-reveal>
+                <span class="icon-wrap"><svg class="icon icon-lg"><use href={`#${feature.icon}`} /></svg></span>
+                <h3>{feature.title}</h3>
+                <p>{feature.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <figure class="territory-photo reveal" data-reveal>
+          <img src={kids.photo} alt={kids.photoAlt} loading="lazy" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== КАРТА =================== -->
+  <section class="band" id="route" aria-label="Вид на комплекс и окрестности">
+    <div class="wrap">
+      <h2 class="title">{map.title}</h2>
+      <p class="lede">{map.lede}</p>
+
+      <div class="map-wrap" id="mapWrap">
+        <img class="map-photo" src={map.photo} alt={map.photoAlt} loading="lazy" />
+        <div class="map-tone" aria-hidden="true"></div>
+
+        {map.pins.map((pin) => (
+          <div class="map-pin-anchor" style={`left:${pin.left}; top:${pin.top}`}>
+            <div class={`map-marker map-pin${pin.alt ? ' pin-alt' : ''}`} data-marker={pin.id}>
+              <span class="pin-dot">{pin.alt ? '' : pin.id}</span>
+              <span class="pin-label">{pin.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="map-legend">
+        {map.legend.map((entry) => (
+          <span><span class={`legend-dot${entry.alt ? ' alt' : ''}`}></span>{entry.label}</span>
+        ))}
+      </div>
+
+      <div class="route-card reveal" data-reveal aria-label="Маршрут от Москвы">
+        {map.route.map((row) => (
+          <div class="route-card-row">
+            <svg class="icon icon-lg"><use href={`#${row.icon}`} /></svg>
+            <div><b>{row.value}</b><span>{row.text}</span></div>
+          </div>
+        ))}
+        <a class="btn btn-ghost route-card-cta" href={site.contacts.mapUrl} target="_blank" rel="noopener">
+          {map.routeCta}<svg class="icon"><use href="#icon-arrow-right" /></svg>
+        </a>
+      </div>
+
+      <ul class="nearby-list">
+        {map.nearby.map((item) => (
+          <li>
+            <b><svg class="icon"><use href={`#${item.icon}`} /></svg>{item.title}</b>
+            <small>{item.time}</small>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- =================== ЦЕНЫ И ПРАВИЛА =================== -->
+  <section class="band" id="rules" aria-label="Цены и правила">
+    <div class="wrap">
+      <h2 class="title">{rules.title}</h2>
+      <div class="rules-grid">
+        <div>
+          <dl>
+            {rules.terms.map((term) => (
+              <><dt>{term.term}</dt><dd>{term.value}</dd></>
+            ))}
+          </dl>
+        </div>
+        <ul class="rules-list">
+          {rules.items.map((item) => (
+            <li>
+              <svg class="icon icon-lg"><use href={`#${item.icon}`} /></svg>
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FAQ =================== -->
+  <section class="band" aria-label="Частые вопросы">
+    <div class="wrap">
+      <h2 class="title">{faq.title}</h2>
+      <div class="faq-list">
+        {faq.items.map((item) => (
+          <details class="faq-item">
+            <summary>
+              {item.question}
+              <svg class="icon"><use href="#icon-caret-down" /></svg>
+            </summary>
+            <div class="faq-a">{item.answer}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== БРОНИРОВАНИЕ =================== -->
+  <section class="band" id="booking" aria-label="Бронирование">
+    <div class="wrap">
+      <h2 class="title">{booking.title}</h2>
+      <p class="lede">{booking.lede}</p>
+
+      <div class="booking-grid">
+        <div class="card booking-calc" id="bookingCalc">
+          <h3 style="font-size:1.05rem;font-weight:500;margin:0 0 1.1em">{booking.calcTitle}</h3>
+          <div class="calc-row">
+            <div class="field">
+              <label for="calc-house">{booking.calcHouseLabel}</label>
+              <select id="calc-house"></select>
+            </div>
+          </div>
+          <div class="calc-row calc-dates">
+            <div class="field">
+              <label for="calc-checkin">{booking.calcCheckinLabel}</label>
+              <input type="date" id="calc-checkin" />
+            </div>
+            <div class="field">
+              <label for="calc-checkout">{booking.calcCheckoutLabel}</label>
+              <input type="date" id="calc-checkout" />
+            </div>
+          </div>
+          <div class="calc-result" id="calcResult">
+            <p class="form-note" style="margin:0">{booking.calcHint}</p>
+          </div>
+          <p class="form-note" style="margin-top:1rem">{booking.calcNote}</p>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="field">
+            <label for="f-name">{booking.form.name}</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="f-phone">{booking.form.phone}</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" required />
+          </div>
+          <div class="field">
+            <label for="f-comment">{booking.form.comment}</label>
+            <textarea id="f-comment" name="comment" rows="3" placeholder={booking.form.commentPlaceholder}></textarea>
+          </div>
+          <label class="checkbox-row"><input type="checkbox" id="f-pet" name="pet" /> {booking.form.pet}</label>
+          <button class="btn btn-primary" type="submit">{booking.form.submit}</button>
+          <p class="form-note" id="formStatus">{booking.form.status}</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,160 @@
+{
+  "houses": [
+    {
+      "areaLabel": "90 м²",
+      "name": "Дом 1",
+      "slug": "house-1",
+      "minNights": 1,
+      "area": 90,
+      "petNote": "С животными — по согласованию.",
+      "petPolicy": "approval",
+      "beds": "2 спальни",
+      "photo": "/images/house-1.webp",
+      "status": "bookable",
+      "amenities": [
+        {
+          "key": "kitchen",
+          "label": "Кухня и духовка",
+          "icon": "icon-chef-hat"
+        },
+        {
+          "key": "washing-machine",
+          "label": "Стиральная машина",
+          "icon": "icon-washing-machine"
+        },
+        {
+          "key": "smart-speaker",
+          "label": "Умная колонка",
+          "icon": "icon-speaker-high"
+        },
+        {
+          "key": "projector",
+          "label": "Проектор",
+          "icon": "icon-projector-screen"
+        }
+      ],
+      "photoAlt": "Дом 1 снаружи, вид с террасой",
+      "bedrooms": 2,
+      "capacity": 4,
+      "capacityLabel": "до 4 гостей",
+      "priceWeekend": 8000
+    },
+    {
+      "areaLabel": "80 м²",
+      "name": "Дом 2",
+      "slug": "house-2",
+      "minNights": 1,
+      "area": 80,
+      "petNote": "Без животных.",
+      "petPolicy": "not-allowed",
+      "beds": "2 спальни",
+      "photo": "/images/house-2.webp",
+      "status": "bookable",
+      "amenities": [
+        {
+          "key": "kitchen",
+          "label": "Кухня и духовка",
+          "icon": "icon-chef-hat"
+        },
+        {
+          "key": "washing-machine",
+          "label": "Стиральная машина",
+          "icon": "icon-washing-machine"
+        },
+        {
+          "key": "smart-speaker",
+          "label": "Умная колонка",
+          "icon": "icon-speaker-high"
+        },
+        {
+          "key": "tv",
+          "label": "Телевизор",
+          "icon": "icon-television"
+        }
+      ],
+      "photoAlt": "Дом 2 снаружи, вид с террасой",
+      "bedrooms": 2,
+      "capacity": 4,
+      "capacityLabel": "до 4 гостей",
+      "priceWeekend": 7500
+    },
+    {
+      "areaLabel": "110 м²",
+      "name": "Дом 3",
+      "slug": "house-3",
+      "minNights": 1,
+      "area": 110,
+      "petNote": "С животными — по согласованию.",
+      "petPolicy": "approval",
+      "beds": "2 спальни",
+      "photo": "/images/house-3.webp",
+      "status": "bookable",
+      "amenities": [
+        {
+          "key": "kitchen",
+          "label": "Кухня и духовка",
+          "icon": "icon-chef-hat"
+        },
+        {
+          "key": "washing-machine",
+          "label": "Стиральная машина",
+          "icon": "icon-washing-machine"
+        },
+        {
+          "key": "sauna-infrared",
+          "label": "Инфракрасная сауна",
+          "icon": "icon-fire"
+        },
+        {
+          "key": "smart-speaker",
+          "label": "Умная колонка",
+          "icon": "icon-speaker-high"
+        }
+      ],
+      "photoAlt": "Дом 3 снаружи, вид с террасой",
+      "bedrooms": 2,
+      "capacity": 4,
+      "capacityLabel": "до 4 гостей",
+      "priceWeekend": 9200
+    },
+    {
+      "areaLabel": "100 м²",
+      "name": "Дом 4",
+      "slug": "house-4",
+      "minNights": 1,
+      "area": 100,
+      "petNote": "Без животных.",
+      "petPolicy": "not-allowed",
+      "beds": "2 спальни",
+      "photo": "/images/house-4.webp",
+      "status": "bookable",
+      "amenities": [
+        {
+          "key": "kitchen",
+          "label": "Кухня и духовка",
+          "icon": "icon-chef-hat"
+        },
+        {
+          "key": "washing-machine",
+          "label": "Стиральная машина",
+          "icon": "icon-washing-machine"
+        },
+        {
+          "key": "smart-speaker",
+          "label": "Умная колонка",
+          "icon": "icon-speaker-high"
+        },
+        {
+          "key": "projector",
+          "label": "Проектор",
+          "icon": "icon-projector-screen"
+        }
+      ],
+      "photoAlt": "Дом 4 снаружи, вид с террасой",
+      "bedrooms": 2,
+      "capacity": 4,
+      "capacityLabel": "до 4 гостей",
+      "priceWeekend": 8200
+    }
+  ]
+}

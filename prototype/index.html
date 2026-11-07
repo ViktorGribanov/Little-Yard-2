@@ -307,6 +307,23 @@
   }
   html.js-anim .reveal.is-revealed{ opacity:1; filter:blur(0); }
 
+  /* Фотографии в reveal дополнительно чуть «наезжают»: 1.03 → 1.
+     Глаз почти не замечает масштаб, но уходит ощущение плоскости.
+     Только для одиночных фото — у карточек домов своя реакция на наведение. */
+  html.js-anim img.reveal{
+    transform:scale(1.03);
+    transition:
+      opacity 1000ms cubic-bezier(.165,.84,.44,1),
+      filter 1000ms cubic-bezier(.165,.84,.44,1),
+      transform 1600ms cubic-bezier(.165,.84,.44,1);
+  }
+  html.js-anim img.reveal.is-revealed{ transform:none; }
+  html.js-anim .territory-photo.reveal img{
+    transform:scale(1.04);
+    transition:transform 1600ms cubic-bezier(.165,.84,.44,1);
+  }
+  html.js-anim .territory-photo.reveal.is-revealed img{ transform:none; }
+
   /* ---------- reveal: заголовки h1/h2 — слово-маска + посимвольный сдвиг снизу ----------
      Каждое слово — маска с overflow:hidden (переносы строк работают как в обычном тексте,
      неразрывные пробелы остаются текстовыми узлами между словами). Символы внутри слова
@@ -340,7 +357,18 @@
     display:grid; gap:1.5rem; margin-block-start:2.5rem;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
-  .house-card{ overflow:hidden; display:flex; flex-direction:column; }
+  .house-card{ overflow:hidden; display:flex; flex-direction:column;
+    transition:transform .35s cubic-bezier(.165,.84,.44,1), box-shadow .35s ease, border-color .35s ease; }
+  .house-photo img{ transition:transform .5s cubic-bezier(.165,.84,.44,1); }
+  /* Карточка целиком — кликабельная: подъём и лёгкий зум фото. Только там,
+     где есть настоящий курсор, чтобы на тач-устройствах не залипало. */
+  @media (hover: hover){
+    .house-card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 14px 30px color-mix(in srgb, var(--ink) 13%, transparent);
+    }
+    .house-card:hover .house-photo img{ transform:scale(1.03); }
+  }
   .house-photo{
     aspect-ratio:4/3; position:relative;
     background:linear-gradient(135deg, var(--surface-2), color-mix(in srgb, var(--accent-2) 20%, var(--surface)));
@@ -450,12 +478,26 @@
 
   /* ---------- faq ---------- */
   .faq-list{ max-width:70ch; margin-block-start:2rem; display:grid; gap:.75rem; }
-  details.faq-item{ border:1px solid var(--line); border-radius:8px; padding:0; background:var(--surface); }
+  details.faq-item{
+    border:1px solid var(--line); border-radius:8px; padding:0; background:var(--surface);
+    transition:border-color .25s ease, background-color .25s ease;
+  }
   details.faq-item summary{
     list-style:none; cursor:pointer; padding:1.1em 1.3em; display:flex;
     justify-content:space-between; align-items:center; gap:1rem; font-size:1.02rem;
+    transition:color .25s ease;
   }
   details.faq-item summary::-webkit-details-marker{ display:none; }
+  /* Наведение и клавиатурный фокус — тем же языком, что у ghost-кнопок и
+     ссылок меню: рамка и текст уходят в акцент, плюс лёгкая терракотовая
+     подложка. focus-within — чтобы фокус с клавиатуры давал тот же вид. */
+  details.faq-item:hover,
+  details.faq-item:focus-within{
+    border-color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 6%, var(--surface));
+  }
+  details.faq-item:hover summary,
+  details.faq-item:focus-within summary{ color:var(--accent); }
   details.faq-item summary .icon{ transition:transform .25s ease; flex:none; }
   details.faq-item[open] summary .icon{ transform:rotate(180deg); }
   details.faq-item .faq-a{ padding:0 1.3em 1.2em; color:var(--ink-soft); }
@@ -541,6 +583,38 @@
     max-height:88vh; color:var(--ink); background:var(--bg);
   }
   dialog.house-dialog::backdrop{ background:color-mix(in srgb, var(--ink) 55%, transparent); backdrop-filter:blur(2px); }
+
+  /* ---------- появление модалок: мягкий вход и выход ----------
+     По умолчанию <dialog> переключается мгновенно. Чтобы анимировать и
+     закрытие, display и overlay переключаются дискретно с задержкой на
+     время перехода, а @starting-style задаёт стартовое состояние входа.
+     Браузеры без этих свойств просто открывают диалог как раньше. */
+  @media (prefers-reduced-motion: no-preference){
+    dialog.legal-dialog,
+    dialog.house-dialog{
+      opacity:0; transform:translateY(10px) scale(.985);
+      transition:
+        opacity 260ms ease,
+        transform 260ms cubic-bezier(.165,.84,.44,1),
+        display 260ms allow-discrete,
+        overlay 260ms allow-discrete;
+    }
+    dialog.legal-dialog[open],
+    dialog.house-dialog[open]{ opacity:1; transform:none; }
+    dialog.legal-dialog::backdrop,
+    dialog.house-dialog::backdrop{
+      opacity:0;
+      transition:opacity 260ms ease, display 260ms allow-discrete, overlay 260ms allow-discrete;
+    }
+    dialog.legal-dialog[open]::backdrop,
+    dialog.house-dialog[open]::backdrop{ opacity:1; }
+    @starting-style{
+      dialog.legal-dialog[open],
+      dialog.house-dialog[open]{ opacity:0; transform:translateY(10px) scale(.985); }
+      dialog.legal-dialog[open]::backdrop,
+      dialog.house-dialog[open]::backdrop{ opacity:0; }
+    }
+  }
   .dialog-scroll{ overflow-y:auto; max-height:88vh; }
   .dialog-head{ position:relative; aspect-ratio:16/8; background:linear-gradient(135deg,var(--surface-2),color-mix(in srgb, var(--accent-2) 22%, var(--surface))); }
   .dialog-close{
@@ -552,6 +626,12 @@
   .dialog-top{ display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:baseline; }
   .dialog-top h3{ font-size:1.6rem; }
   .dialog-facts{ display:flex; flex-wrap:wrap; gap:.6rem; }
+  /* .chip спроектирован для hero — белый текст поверх фото. В попапе фон
+     светлый, поэтому там нужен свой, контрастный вариант. */
+  .dialog-facts .chip{
+    background:var(--bg); border-color:var(--line); color:var(--ink-soft);
+  }
+  .dialog-facts .chip .icon{ color:var(--accent-2); }
   .dialog-amenities{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:.7em; list-style:none; margin:0; padding:0; }
   .dialog-amenities li{ display:flex; gap:.6em; align-items:center; font-size:.94rem; }
   .dialog-amenities .icon{ color:var(--accent-2); }
@@ -638,7 +718,7 @@
   <!-- =================== HERO =================== -->
   <section class="hero" id="top" aria-label="Главный экран">
     <div class="hero-photo">
-      <img class="reveal" data-reveal src="/_blob/73b83d75cdc13d199c904965a97d726c" alt="Дома Little Yard в лесу на закате" loading="eager" width="2000" height="1125">
+      <img class="reveal" data-reveal src="assets/hero.webp" alt="Дома Little Yard в лесу на закате" loading="eager" width="1600" height="900">
       <div class="hero-scrim" aria-hidden="true"></div>
       <div class="wrap hero-copy">
         <h1>Ваши дни за&nbsp;городом</h1>
@@ -664,10 +744,10 @@
         <p class="lede reveal" data-reveal>Мы сдаём дома сами, без управляющей компании,&nbsp;— поэтому можем ответить на&nbsp;любой вопрос лично. Все дома стоят на&nbsp;одной благоустроенной территории: общий въезд, общая охрана, у&nbsp;каждого&nbsp;— свой участок и&nbsp;вход. Пятый дом сейчас строится и&nbsp;пока не&nbsp;сдаётся.</p>
       </div>
       <div class="intro-mosaic reveal" data-reveal aria-label="Четыре дома на участке">
-        <div class="m-item"><img src="/_blob/3a86af97b4d3fa12036d54c0ffc97c04" alt="Дом 1" loading="lazy"><span>Дом 1</span></div>
-        <div class="m-item"><img src="/_blob/e8f2ba9c9031d7ec8b4360bbd9154ad8" alt="Дом 2" loading="lazy"><span>Дом 2</span></div>
-        <div class="m-item"><img src="/_blob/7d794bf6cfd535fd0e2e9e102b1aa889" alt="Дом 3" loading="lazy"><span>Дом 3</span></div>
-        <div class="m-item"><img src="/_blob/b96c36f03ecc3b3ae161b5b2127375a0" alt="Дом 4" loading="lazy"><span>Дом 4</span></div>
+        <div class="m-item"><img src="assets/house-1.webp" alt="Дом 1" loading="lazy"><span>Дом 1</span></div>
+        <div class="m-item"><img src="assets/house-2.webp" alt="Дом 2" loading="lazy"><span>Дом 2</span></div>
+        <div class="m-item"><img src="assets/house-3.webp" alt="Дом 3" loading="lazy"><span>Дом 3</span></div>
+        <div class="m-item"><img src="assets/house-4.webp" alt="Дом 4" loading="lazy"><span>Дом 4</span></div>
       </div>
     </div>
   </section>
@@ -722,7 +802,7 @@
           </div>
         </div>
         <figure class="territory-photo reveal" data-reveal>
-          <img src="/_blob/d213418973b5175809e64eb03468b5a5" alt="Вид на общую территорию Little Yard из окна одного из домов: лужайка, мангал и соседние дома среди леса" loading="lazy">
+          <img src="assets/territory.webp" alt="Вид на общую территорию Little Yard из окна одного из домов: лужайка, мангал и соседние дома среди леса" loading="lazy">
         </figure>
       </div>
     </div>
@@ -742,7 +822,7 @@
           </div>
         </div>
         <figure class="territory-photo reveal" data-reveal>
-          <img src="/_blob/a69326b7de75d9ff082cabb26567feac" alt="Семья с ребёнком и собакой отдыхает на диване в гостиной одного из домов Little Yard, панорамные окна с видом на лес" loading="lazy">
+          <img src="assets/family.webp" alt="Семья с ребёнком и собакой отдыхает на диване в гостиной одного из домов Little Yard, панорамные окна с видом на лес" loading="lazy">
         </figure>
       </div>
     </div>
@@ -755,22 +835,22 @@
       <p class="lede">Вид участка сверху — дома и&nbsp;точки проявляются по&nbsp;мере прокрутки. Снимок черновой, заменим на&nbsp;настоящий; маршрут от&nbsp;Москвы — предварительный, точный адрес уточняется.</p>
 
       <div class="map-wrap" id="mapWrap">
-        <img class="map-photo" src="/_blob/e467a9594604ab7c825425109b508b75" alt="Вид на участок Little Yard с воздуха: четыре дома на одной территории, лес и река рядом" loading="lazy">
+        <img class="map-photo" src="assets/map.webp" alt="Вид на участок Little Yard с воздуха: четыре дома на одной территории, лес и река рядом" loading="lazy">
         <div class="map-tone" aria-hidden="true"></div>
 
-        <div class="map-pin-anchor" style="left:33%; top:34%">
+        <div class="map-pin-anchor" style="left:35%; top:36%">
           <div class="map-marker map-pin" data-marker="1"><span class="pin-dot">1</span><span class="pin-label">Дом 1</span></div>
         </div>
-        <div class="map-pin-anchor" style="left:57%; top:22%">
+        <div class="map-pin-anchor" style="left:53%; top:31%">
           <div class="map-marker map-pin" data-marker="2"><span class="pin-dot">2</span><span class="pin-label">Дом 2</span></div>
         </div>
-        <div class="map-pin-anchor" style="left:36%; top:64%">
+        <div class="map-pin-anchor" style="left:37%; top:66%">
           <div class="map-marker map-pin" data-marker="3"><span class="pin-dot">3</span><span class="pin-label">Дом 3</span></div>
         </div>
-        <div class="map-pin-anchor" style="left:63%; top:53%">
+        <div class="map-pin-anchor" style="left:63%; top:55%">
           <div class="map-marker map-pin" data-marker="4"><span class="pin-dot">4</span><span class="pin-label">Дом 4</span></div>
         </div>
-        <div class="map-pin-anchor" style="left:86%; top:24%">
+        <div class="map-pin-anchor" style="left:86%; top:12%">
           <div class="map-marker map-pin pin-alt" data-marker="river"><span class="pin-dot"></span><span class="pin-label">река Мелька — 10 мин пешком</span></div>
         </div>
       </div>
@@ -995,19 +1075,19 @@
     { id:1, name:"Дом 1", area:"90 м²", capacity:"до 4 гостей", beds:"2 спальни",
       amenities:["Кухня и духовка","Стиральная машина","Умная колонка","Проектор"],
       pet:"С животными — по согласованию.", priceWeekend:8000, priceNote:"−30% в будни",
-      photo:"/_blob/3a86af97b4d3fa12036d54c0ffc97c04" },
+      photo:"assets/house-1.webp" },
     { id:2, name:"Дом 2", area:"80 м²", capacity:"до 4 гостей", beds:"2 спальни",
       amenities:["Кухня и духовка","Стиральная машина","Умная колонка","Телевизор"],
       pet:"Без животных.", priceWeekend:7500, priceNote:"−30% в будни",
-      photo:"/_blob/e8f2ba9c9031d7ec8b4360bbd9154ad8" },
+      photo:"assets/house-2.webp" },
     { id:3, name:"Дом 3", area:"110 м²", capacity:"до 4 гостей", beds:"2 спальни",
       amenities:["Кухня и духовка","Стиральная машина","Инфракрасная сауна","Умная колонка"],
       pet:"С животными — по согласованию.", priceWeekend:9200, priceNote:"−30% в будни",
-      photo:"/_blob/7d794bf6cfd535fd0e2e9e102b1aa889" },
+      photo:"assets/house-3.webp" },
     { id:4, name:"Дом 4", area:"100 м²", capacity:"до 4 гостей", beds:"2 спальни",
       amenities:["Кухня и духовка","Стиральная машина","Умная колонка","Проектор"],
       pet:"Без животных.", priceWeekend:8200, priceNote:"−30% в будни",
-      photo:"/_blob/b96c36f03ecc3b3ae161b5b2127375a0" }
+      photo:"assets/house-4.webp" }
   ];
   var WEEKDAY_DISCOUNT = 0.3; // −30% пн–пт, по брифу
   function priceWeekday(h){ return Math.round(h.priceWeekend * (1 - WEEKDAY_DISCOUNT) / 50) * 50; }
@@ -1306,7 +1386,7 @@
      загрузился ли GSAP с CDN.
 
      Контент (.reveal): opacity 0→1 + blur(5px→0), 1000 мс,
-     cubic-bezier(.165,.84,.44,1), без сдвига/масштаба.
+     cubic-bezier(.165,.84,.44,1); фотографии дополнительно scale(1.03→1).
 
      Заголовки (.split-heading): текст разбит на слова (каждое — маска
      overflow:hidden, переносы строк и неразрывные пробелы между словами
@@ -1319,15 +1399,17 @@
      (см. правки разметки в hero/интро/будни) — блюр контента и заголовка
      не смешиваются.
 
-     Запуск — один раз на элемент: как только видно 25% элемента, либо
-     (доп. условие для блоков выше экрана) когда верх элемента достиг 80%
-     высоты viewport — смотря что раньше; оба случая реализованы двумя
-     IntersectionObserver (стандартный threshold и rootMargin, сокращающий
-     область снизу на 20%). IntersectionObserver сам сообщает исходное
-     состояние при вызове observe() — поэтому то, что уже в зоне запуска
-     при загрузке, анимируется сразу, без отдельного кода. Про запуск
-     ничего не прячем обратно при скролле вверх (unobserve после первого
-     срабатывания). Ждём document.fonts.ready перед разбивкой/измерением,
+     Запуск — как только видно 25% элемента, либо (доп. условие для
+     блоков выше экрана) когда верх элемента достиг 80% высоты viewport —
+     смотря что раньше; оба случая реализованы двумя IntersectionObserver
+     (стандартный threshold и rootMargin, сокращающий область снизу на
+     20%), каждый наблюдает элемент постоянно (без unobserve), так что
+     анимация повторяется при каждом новом входе в зону — как при скролле
+     вниз, так и при скролле обратно вверх к уже виденному блоку.
+     IntersectionObserver сам сообщает исходное состояние при вызове
+     observe() — поэтому то, что уже в зоне запуска при загрузке,
+     анимируется сразу, без отдельного кода. Ждём document.fonts.ready
+     перед разбивкой/измерением,
      чтобы метрики текста были финальными. Без JS или при
      prefers-reduced-motion класс js-anim не добавляется — весь текст
      и фото остаются видны как обычно. */
@@ -1367,20 +1449,24 @@
       contentEls.forEach(function(e){ e.classList.add("reveal"); });
 
       var targets = headings.concat(contentEls);
-      var revealed = new WeakSet();
+      /* состояние каждого элемента по каждому из двух триггеров — элемент
+         считается в зоне показа, пока активен хотя бы один из них;
+         анимация повторяется при каждом новом входе в зону (а не один раз
+         за всё время), поэтому класс снимается при выходе из обеих зон */
+      var zoneState = new WeakMap();
 
-      function reveal(elm){
-        if(revealed.has(elm)) return;
-        revealed.add(elm);
-        elm.classList.add("is-revealed");
-        io25.unobserve(elm);
-        io80.unobserve(elm);
+      function updateReveal(elm){
+        var s = zoneState.get(elm) || { z25:false, z80:false };
+        elm.classList.toggle("is-revealed", s.z25 || s.z80);
       }
 
       /* триггер №1: видно 25% элемента */
       var io25 = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
-          if(entry.isIntersecting) reveal(entry.target);
+          var s = zoneState.get(entry.target) || { z25:false, z80:false };
+          s.z25 = entry.isIntersecting;
+          zoneState.set(entry.target, s);
+          updateReveal(entry.target);
         });
       }, { threshold: 0.25 });
 
@@ -1388,7 +1474,10 @@
          высоты viewport — зона наблюдения снизу сокращена на 20% */
       var io80 = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
-          if(entry.isIntersecting) reveal(entry.target);
+          var s = zoneState.get(entry.target) || { z25:false, z80:false };
+          s.z80 = entry.isIntersecting;
+          zoneState.set(entry.target, s);
+          updateReveal(entry.target);
         });
       }, { threshold: 0, rootMargin: "0px 0px -20% 0px" });
 

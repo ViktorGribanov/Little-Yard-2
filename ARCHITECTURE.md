@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — Little Yard landing site
 
-Status: decided, not yet implemented. No code exists yet (see `README.md`).
+Status: decided, not yet implemented. The only code so far is the Phase 1 review prototype `prototype/index.html` — a single static HTML file that deliberately sits outside the structure below and is not the start of the Astro application (see `README.md`).
 
 ## 1. Chosen stack
 
@@ -30,7 +30,7 @@ See `REQUIREMENTS.md` §4 for the owner-confirmed phase split. Architecturally:
 
 ## 4. Planned code organization
 
-Not yet created. When Phase 1 begins, organize roughly as:
+Not yet created. The Phase 1 review prototype (`prototype/index.html`) is a single throwaway HTML file and is not laid out this way on purpose — nothing in it is meant to be carried over as source. When the Astro build begins, organize roughly as:
 
 ```
 /src

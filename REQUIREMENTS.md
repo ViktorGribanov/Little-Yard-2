@@ -2,7 +2,7 @@
 
 English working specification derived from the owner's original Russian materials. The Russian brief, the voice-message addendum, and the content/structure document remain the source of truth for wording, tone, and exact Russian copy — this file restates scope and constraints for implementation purposes and does not replace them. See the documentation map in `AGENTS.md` for where each source lives.
 
-Status: pre-development. No code exists yet.
+Status: Phase 1 review build exists (`prototype/index.html`, one static HTML file). No application code, CMS, or backend yet.
 
 ## 1. Product
 

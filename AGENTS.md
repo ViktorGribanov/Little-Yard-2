@@ -2,6 +2,132 @@
 
 Instructions for any agent (human or AI) working on this project.
 
+## 0. Data safety — read before any destructive action
+
+Binds every agent working in this repository. The owner wrote this policy in Russian and it is kept verbatim below, untranslated on purpose: the exact wording is the rule, and a translation could soften it. It applies on top of everything else in this file; where it is stricter, it wins.
+
+### Сохранность данных без блокирования разработки
+
+Оценивай действие по фактическим последствиям и затронутым ресурсам,
+а не только по названию команды или наличию флагов force/reset/delete.
+
+#### Что необходимо защищать
+
+Не уничтожай и не перезаписывай без явного согласования:
+- пользовательские и бизнес-данные;
+- существующие БД с неизвестным или ценным содержимым;
+- uploads, документы, секреты и резервные копии;
+- незакоммиченные изменения пользователя;
+- единственные экземпляры файлов и невоспроизводимых артефактов;
+- данные и ресурсы других проектов, общих и production-окружений.
+
+Локальная среда и названия test, dev, temporary, unused или cache
+сами по себе не означают, что данные можно удалить.
+
+#### Что можно делать самостоятельно
+
+В рамках задачи разрешены:
+- обычные правки исходников, включая удаление и замену кода,
+  необходимые для задачи, с сохранением чужих изменений;
+- сборка, линтинг и тесты после разумной проверки их конфигурации;
+- создание и очистка изолированных тестовых ресурсов;
+- удаление воспроизводимых результатов сборки и временных файлов;
+- пересоздание контейнеров без уникального состояния, если нужные
+  данные сохраняются в проверенных volumes или bind mounts;
+- штатный перезапуск локальных сервисов, если краткий простой
+  допустим в рамках задачи и не затрагивает чужую работу.
+
+Для очистки ресурса нужны конкретные основания:
+известны его назначение, содержимое, принадлежность и способ
+воспроизведения; операция имеет ограниченную область действия.
+Одного названия ресурса недостаточно.
+
+#### Проверка должна соответствовать риску
+
+Перед действиями с хранилищами, контейнерами, БД и инфраструктурой
+проверь фактическое окружение, цель и способ хранения данных.
+
+Для обычной правки кода или повторного запуска уже проверенного
+теста не проводи полный аудит инфраструктуры.
+
+Изучи вызываемые скрипты, hooks и миграции, если их поведение
+неизвестно и они могут затронуть защищаемые данные.
+Не считай запуск приложения или тестов автоматически безопасным.
+
+Если неопределённость касается возможной потери защищаемых данных,
+останови только рискованный шаг. Продолжай независимую безопасную
+часть задачи и выясняй недостающие факты.
+
+#### Docker и базы данных
+
+Не выполняй широкую очистку Docker-хоста как способ исправить
+локальную проблему. Предпочитай операции над конкретным ресурсом.
+
+Перед удалением или пересозданием контейнера проверь mounts
+и наличие нужных данных в writable layer.
+Отсутствие --volumes не доказывает безопасность.
+
+Не меняй подключение на пустую БД или новый volume, чтобы скрыть
+проблему с существующими данными.
+
+#### Явно запрещённые операции без отдельного согласования
+
+Не запускай самостоятельно:
+- `docker system prune` с любыми флагами,
+  особенно `docker system prune -a --volumes`;
+- `docker volume prune` с любыми флагами,
+  особенно `docker volume prune -a`;
+- `docker compose down -v` / `docker compose down --volumes`;
+- очистку данных или Factory Reset в Docker Desktop;
+- эквивалентные операции через API, GUI, скрипты или другие инструменты.
+
+Эти запреты имеют приоритет над разрешением самостоятельно
+очищать временные и воспроизводимые ресурсы.
+Для таких ресурсов используй адресное удаление по проверенному
+имени или ID, не массовую очистку.
+
+`docker volume rm`, `docker rm -v`, `docker compose rm -v`,
+сброс БД, destructive migrations и другие адресные операции удаления
+допустимы самостоятельно только для проверенно одноразовых,
+изолированных ресурсов, предназначенных для таких операций.
+Если это не установлено — требуется отдельное согласование.
+
+Не используй очистку или сброс как автоматический способ
+исправить ошибку запуска, сборки, миграции или подключения к БД.
+
+Согласование должно явно охватывать конкретную операцию,
+окружение и удаляемые ресурсы. Общая просьба «почини»,
+«пересобери» или «освободи место» таким согласием не является.
+
+#### Когда нужно согласование
+
+Запрашивай разрешение для явно запрещённых выше операций, а также
+если действие:
+- уничтожает или необратимо изменяет защищаемые данные;
+- может затронуть ресурсы за пределами задачи;
+- создаёт существенный риск потери данных, который не удалось
+  исключить разумной диагностикой.
+
+Покажи конкретное действие, ресурсы, последствия и безопасную
+альтернативу. Для ценных данных предложи подходящий backup
+и проверку восстановления; не заявляй о надёжности непроверенной копии.
+
+Общая просьба «почини» или «сделай всё необходимое» не разрешает
+потерю данных. Явное разрешение на конкретную операцию и ресурсы
+не требует повторного подтверждения, пока объём и риск не изменились.
+
+#### Не обходи ограничения
+
+Те же правила действуют для shell, API, GUI, SQL, скриптов и CI.
+Не обходи запрет сменой инструмента или отключением защиты.
+
+Не включай несогласованные разрушительные операции в автоматические
+скрипты. При ошибке не переходи автоматически к reset/prune/clean.
+
+Для операций, не перечисленных в разделе явных запретов,
+не запрашивай подтверждение только потому, что команда выглядит
+опасной: сначала установи её реальные последствия.
+
 ## 1. Language rules
 
 - Speak with the project owner (Viktor) in **Russian**: questions, explanations, progress updates, results.
@@ -19,6 +145,8 @@ Read in this order before starting any task:
 3. **`REQUIREMENTS.md`** — confirmed scope, user scenarios, exclusions, open questions. Always read before any implementation decision.
 4. **`ARCHITECTURE.md`** — chosen stack, code organization, integrations. Read before writing or restructuring code.
 5. **`DESIGN.md`** — does not exist yet. See §4 below before creating it.
+6. **`prototype/index.html`** — the Phase 1 clickable prototype: one self-contained file, hard-coded placeholder content. It stays as the approved visual reference; the Astro build is expected to match it. How to preview it: `README.md`, "Running the prototype".
+7. **`site/`** — the Phase 2 Astro project (the real implementation). Start with `site/docs/CONTENT-MODEL.md`, then `site/README.md` for commands. Content lives in `site/src/data/` as JSON until the CMS is wired in.
 
 Source material (Russian, not translated, kept as reference — not duplicated into the English docs):
 - Brief: Google Sheets "Бриф — четыре загородных дома" (owner's Drive).
@@ -29,6 +157,8 @@ Source material (Russian, not translated, kept as reference — not duplicated i
 ## 3. Design status — read before touching anything visual
 
 The visual concept is **not approved**. Colors, typography, spacing values, component shapes and composition described in the concept documents are hypotheses for the owner to react to, not requirements.
+
+The Phase 1 prototype (`prototype/index.html`) exists precisely to collect that reaction: its palette, type and component shapes are proposals under review. Editing them inside the prototype is expected and cheap; treating them as the project's design system is not.
 
 - Do not hard-code any of those color/type/shape values into components or styles as if they were final.
 - Do not ask the project owner to describe the future design in words just to fill out a document.
@@ -114,7 +244,7 @@ Don't ask about a commit after every file edit or intermediate step — group re
 
 ## 7. Testing — mandatory
 
-No application code or tests exist yet. These rules govern testing from the point code is first written; they are recorded now so testing is never left as an afterthought.
+No application code or tests exist yet — only the static Phase 1 prototype, which has inline CSS/JS and no test harness. These rules govern testing from the point the Astro code is first written; they are recorded now so testing is never left as an afterthought.
 
 **Tests are written alongside the code, not deferred.** Add the automated tests a new piece of functionality needs within the same task that adds it — not as a separately scheduled, open-ended step. Set up the actual testing tooling (test runner, etc.) when the first code that needs automated checks is written, matching the chosen stack (see `ARCHITECTURE.md` §7, not yet decided).
 

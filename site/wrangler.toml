@@ -1,0 +1,16 @@
+# Конфигурация Cloudflare Pages.
+# Нужна для локального запуска Pages Functions через `npx wrangler pages dev dist`
+# и как явная запись настроек, которые иначе задаются в панели.
+#
+# В панели Cloudflare при подключении Git-репозитория указать:
+#   Root directory       — site
+#   Build command        — npm run build
+#   Build output         — dist
+
+name = "little-yard"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-11-01"
+
+# Переменные окружения (секреты — через панель или `wrangler pages secret put`):
+#   TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+#   GITHUB_TOKEN, GITHUB_REPO, GITHUB_BRANCH

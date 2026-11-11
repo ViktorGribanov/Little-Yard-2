@@ -39,3 +39,12 @@ item or a section record and renders it. The content model is the contract — s
 - Images: `sharp`-based optimisation is Astro's default; source photos live in
   `public/images/` for now and move to the CMS media library when the CMS is
   wired in.
+
+## Заявки и календарь
+
+Форма на сайте отправляет заявку на `POST /api/booking`. Локально её принимает
+dev-сервер и пишет в `src/data/bookings.json`; на Cloudflare Pages — одноимённая
+Function, которая коммитит файл в репозиторий. Уведомления в Telegram включаются
+переменными окружения. Подробности, статусы и ключи: `docs/BOOKING.md`.
+
+Тесты логики бронирования: `npm test`.

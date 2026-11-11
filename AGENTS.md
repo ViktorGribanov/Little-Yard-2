@@ -216,7 +216,26 @@ This is not optional and does not need a separate reminder for each task.
 
 ## 6. Git workflow — mandatory
 
-This repository is version-controlled with Git. No remote is configured yet — a remote is added only on the owner's separate instruction, never on its own.
+This repository is version-controlled with Git.
+
+**Canonical remote.** On 2026-11-11 the owner created the GitHub repository
+`https://github.com/ViktorGribanov/Little-Yard-2.git` and instructed that it is
+the project's repository: every future GitHub action — branches, commits, pushes,
+Cloudflare Pages connection, the `GITHUB_REPO` value for booking storage — refers
+to it and to nothing else. Adding another remote, pushing elsewhere, or creating a
+second repository requires a new explicit instruction from the owner.
+
+**Access status (2026-11-12).** GitHub CLI is signed in as `ViktorGribanov`
+(scopes: `repo`, `read:org`, `gist`) and is registered as the Git credential
+helper. Read and write are verified: `git ls-remote origin` and
+`git push --dry-run origin main` both succeed. The repository is public and still
+empty, so the first push creates `main`.
+
+`site/.env` stores the CLI token as `GITHUB_TOKEN`; it can commit bookings from
+the Cloudflare Function, but it is tied to the CLI session and is revoked on
+`gh auth logout`. Before a public launch replace it with a fine-grained personal
+access token (Contents: read and write) — that value also goes into Cloudflare as
+a secret. The token must never be committed.
 
 **Commits are never created automatically.** Every commit requires the owner's explicit confirmation, given after seeing the proposed change.
 

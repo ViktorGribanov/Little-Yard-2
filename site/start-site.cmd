@@ -2,6 +2,12 @@
 setlocal
 cd /d "%~dp0"
 
+rem Node не использует системный прокси Windows (VPN-клиент поднимает его
+rem на 127.0.0.1). Включаем поддержку переменных прокси и читаем HTTPS_PROXY
+rem из .env, если он там указан.
+set "NODE_USE_ENV_PROXY=1"
+if exist ".env" for /f "usebackq tokens=1,2 delims==" %%A in (`findstr /b /i "HTTPS_PROXY=" ".env" 2^>nul`) do set "%%A=%%B"
+
 where node >nul 2>&1
 if errorlevel 1 goto no_node
 

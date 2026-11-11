@@ -6,6 +6,7 @@ import housesData from '../data/houses.json';
 const houses = housesData.houses;
 import sections from '../data/sections.json';
 import faq from '../data/faq.json';
+import bookingsData from '../data/bookings.json';
 
 const { hero, booking: bookingSettings } = site;
 const { intro, houses: housesSection, weekdays, territory, kids, map, rules, booking } = sections;
@@ -17,6 +18,7 @@ const bookable = houses.filter((h) => h.status === 'bookable');
 // dialog.
 const housesPayload = bookable.map((h, index) => ({
   id: index + 1,
+  slug: h.slug,
   name: h.name,
   area: h.areaLabel,
   capacity: h.capacityLabel,
@@ -34,8 +36,13 @@ const weekdayPrice = (value) =>
   Math.round((value * (1 - bookingSettings.weekdayDiscount)) / 50) * 50;
 ---
 
+<script>
+  import '../scripts/booking-calendar.js';
+</script>
+
 <BaseLayout>
   <script type="application/json" id="houses-data" set:html={JSON.stringify(housesPayload)} />
+  <script type="application/json" id="bookings-data" set:html={JSON.stringify(bookingsData.bookings)} />
 
   <!-- =================== HERO =================== -->
   <section class="hero" id="top" aria-label="Главный экран">
@@ -296,6 +303,20 @@ const weekdayPrice = (value) =>
       <h2 class="title">{booking.title}</h2>
       <p class="lede">{booking.lede}</p>
 
+      <div class="card calendar-card" id="bookingCalendar">
+        <div class="calendar-head">
+          <h3 style="font-size:1.05rem;font-weight:500;margin:0">Календарь занятости</h3>
+          <div class="calendar-legend">
+            <span><i class="cal-dot cal-free"></i>свободно</span>
+            <span><i class="cal-dot cal-pending"></i>заявка</span>
+            <span><i class="cal-dot cal-booked"></i>занято</span>
+          </div>
+        </div>
+        <div class="calendar-months" id="calendarMonths"></div>
+        <p class="form-note" id="calendarHint" role="status">
+          Выберите даты в календаре или в полях ниже — стоимость пересчитается сама.
+        </p>
+      </div>
       <div class="booking-grid">
         <div class="card booking-calc" id="bookingCalc">
           <h3 style="font-size:1.05rem;font-weight:500;margin:0 0 1.1em">{booking.calcTitle}</h3>

@@ -24,6 +24,49 @@ media_folder: public/images/uploads
 public_folder: /images/uploads
 
 collections:
+  - name: bookings
+    label: Заявки
+    description: "Заявки с сайта. Подтверждение занимает даты в календаре, отклонение их освобождает."
+    files:
+      - name: bookings
+        label: Список заявок
+        file: src/data/bookings.json
+        format: json
+        fields:
+          - name: bookings
+            label: Заявки
+            label_singular: Заявка
+            widget: list
+            summary: "{{fields.checkin}} → {{fields.checkout}} · {{fields.name}} · {{fields.status}}"
+            fields:
+              - { name: id, label: Номер заявки, widget: string, hint: "Приходит с сайта автоматически" }
+              - name: house
+                label: Дом
+                widget: select
+                options:
+                  - { label: Дом 1, value: house-1 }
+                  - { label: Дом 2, value: house-2 }
+                  - { label: Дом 3, value: house-3 }
+                  - { label: Дом 4, value: house-4 }
+              - { name: checkin, label: Заезд, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+              - { name: checkout, label: Выезд, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+              - { name: name, label: Гость, widget: string }
+              - { name: phone, label: Телефон, widget: string }
+              - { name: guests, label: Гостей, widget: number, value_type: int, required: false, min: 1, max: 8 }
+              - { name: pet, label: С питомцем, widget: boolean, required: false, default: false }
+              - { name: comment, label: Комментарий гостя, widget: text, required: false }
+              - name: status
+                label: Статус
+                widget: select
+                options:
+                  - { label: "Новая — ждёт решения", value: new }
+                  - { label: "Подтверждена — даты заняты", value: confirmed }
+                  - { label: "Отклонена — даты свободны", value: declined }
+                default: new
+              - { name: managerNote, label: Заметка менеджера, widget: text, required: false }
+              - { name: telegramStatus, label: "Доставка в Telegram", widget: string, required: false, hint: "Заполняется автоматически: отправлено / не отправлено: причина" }
+              - { name: source, label: Источник, widget: string, required: false, hint: "site или seed" }
+              - { name: createdAt, label: Создана, widget: string, required: false }
   - name: houses
     label: Дома
     label_singular: Дом

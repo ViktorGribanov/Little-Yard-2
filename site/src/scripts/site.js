@@ -242,16 +242,8 @@
   window.addEventListener("resize", onScroll);
   onScroll();
 
-  /* ---------- форма ---------- */
-  var form = document.getElementById("contactForm");
-  var status = document.getElementById("formStatus");
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
-    if(!form.checkValidity()){ form.reportValidity(); return; }
-    form.querySelectorAll("input,textarea,button").forEach(function(f){ f.disabled = true; });
-    status.innerHTML = svgUse("icon-check")+' <span class="form-success">Заявка отправлена — менеджер свяжется с вами.</span>';
-    status.classList.add("form-success");
-  });
+  /* Форма и календарь вынесены в scripts/booking-calendar.js. */
+
 
   /* ============================================================
      Карта: домики и точки появляются по мере прокрутки блока —

@@ -581,3 +581,31 @@
 
   .skip-link{ position:fixed; left:-999px; top:1rem; z-index:100; background:var(--accent); color:var(--accent-ink); padding:.7em 1.2em; border-radius:7px; }
   .skip-link:focus{ left:1rem; }
+  /* ---------- календарь занятости ---------- */
+  .calendar-card{ padding:clamp(1.4rem,2.5vw,2rem); margin-block-end:2rem; }
+  .calendar-head{ display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:.8rem 1.5rem; margin-block-end:1.2rem; }
+  .calendar-legend{ display:flex; flex-wrap:wrap; gap:.4rem 1.1rem; font-size:.8rem; color:var(--ink-soft); }
+  .calendar-legend span{ display:inline-flex; align-items:center; gap:.45em; }
+  .cal-dot{ width:.7em; height:.7em; border-radius:50%; display:inline-block; }
+  .cal-free{ background:var(--surface-2); border:1px solid var(--line); }
+  .cal-pending{ background:var(--accent-2); }
+  .cal-booked{ background:var(--accent); }
+  .calendar-months{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:1.6rem 2rem; }
+  @media (max-width:760px){ .calendar-months{ grid-template-columns:1fr; } }
+  .cal-month h4{ font-size:.95rem; font-weight:500; margin:0 0 .7em; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:.25rem; }
+  .cal-dow{ font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); text-align:center; padding-block:.35em; }
+  .cal-day{
+    aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+    font:inherit; font-size:.88rem; color:var(--ink); background:var(--bg);
+    border:1px solid var(--line); border-radius:7px; cursor:pointer;
+    transition:background-color .18s ease, border-color .18s ease, color .18s ease;
+  }
+  .cal-day:hover{ border-color:var(--accent); }
+  .cal-day.is-empty{ border:none; background:none; pointer-events:none; }
+  .cal-day.is-past{ opacity:.32; pointer-events:none; }
+  .cal-day.is-booked{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); border-color:color-mix(in srgb, var(--accent) 35%, var(--line)); color:var(--ink-soft); text-decoration:line-through; pointer-events:none; }
+  .cal-day.is-pending{ background:color-mix(in srgb, var(--accent-2) 22%, var(--surface)); border-color:color-mix(in srgb, var(--accent-2) 45%, var(--line)); pointer-events:none; }
+  .cal-day.is-range{ background:color-mix(in srgb, var(--accent) 18%, var(--surface)); border-color:color-mix(in srgb, var(--accent) 40%, var(--line)); }
+  .cal-day.is-checkin, .cal-day.is-checkout{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .form-note.is-error{ color:#A3402B; }

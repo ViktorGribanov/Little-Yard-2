@@ -9,9 +9,9 @@
 
 backend:
   name: github
-  repo: little-yard/little-yard          # заменить на реальный репозиторий
+  repo: ViktorGribanov/Little-Yard-2
   branch: main
-  base_url: https://little-yard-oauth.example.workers.dev   # адрес Worker-прокси
+  base_url: https://little-yard-site.pages.dev/oauth
   auth_endpoint: auth
 
 # Пока репозиторий и OAuth не настроены, админка работает локально:

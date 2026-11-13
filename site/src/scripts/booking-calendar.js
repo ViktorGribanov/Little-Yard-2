@@ -255,6 +255,39 @@
     window.addEventListener("load", syncFromInputsAndFix);
     syncFromInputsAndFix();
 
+    /* --- маска телефона: +7 (999) 123-45-67, не больше 11 цифр --- */
+    var phoneInput = document.getElementById("f-phone");
+
+    function formatPhone(raw){
+      var digits = String(raw || "").replace(/\D/g, "");
+      if(!digits) return "";
+      if(digits[0] === "8") digits = "7" + digits.slice(1);
+      if(digits[0] !== "7") digits = "7" + digits;
+      digits = digits.slice(0, 11);
+
+      var rest = digits.slice(1);
+      var out = "+7";
+      if(rest.length) out += " (" + rest.slice(0, 3);
+      if(rest.length >= 3) out += ")";
+      if(rest.length > 3) out += " " + rest.slice(3, 6);
+      if(rest.length > 6) out += "-" + rest.slice(6, 8);
+      if(rest.length > 8) out += "-" + rest.slice(8, 10);
+      return out;
+    }
+
+    if(phoneInput){
+      phoneInput.addEventListener("input", function(){
+        var atEnd = phoneInput.selectionStart === phoneInput.value.length;
+        phoneInput.value = formatPhone(phoneInput.value);
+        if(atEnd){
+          try { phoneInput.setSelectionRange(phoneInput.value.length, phoneInput.value.length); } catch (e) {}
+        }
+      });
+      phoneInput.addEventListener("blur", function(){
+        // недонабранный номер не форматируем дальше, но и не ломаем ввод
+        if(phoneInput.value.replace(/\D/g, "").length < 2) phoneInput.value = "";
+      });
+    }
     /* --- отправка заявки --- */
     if(!form) return;
 

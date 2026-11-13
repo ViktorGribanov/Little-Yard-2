@@ -610,3 +610,5 @@
   .cal-day.is-checkin, .cal-day.is-checkout{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
   .form-note.is-error{ color:#A3402B; }
   .calendar-house{ color:var(--accent); }
+  .house-card{ cursor:pointer; }
+  .house-card .house-cta{ cursor:pointer; }

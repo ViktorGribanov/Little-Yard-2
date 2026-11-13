@@ -1,5 +1,9 @@
 // /oauth/callback — обмен кода GitHub на токен и передача его админке.
-// Decap открывает это окно, ждёт postMessage и сохраняет токен у себя.
+//
+// Decap открывает это окно и ждёт postMessage с токеном. Окно и админка
+// обмениваются сообщениями, и порядок не гарантирован: админка может начать
+// слушать позже, чем мы отправим. Поэтому отправляем несколько раз — сразу и
+// с повторами, а также в ответ на любое сообщение от родителя.
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
@@ -34,12 +38,26 @@ export async function onRequestGet({ request, env }) {
 <script>
   (function () {
     var message = ${message};
-    function receive(event) {
-      window.opener.postMessage(message, event.origin || '*');
-      window.removeEventListener('message', receive, false);
+
+    function sendToOpener(origin) {
+      if (!window.opener) return;
+      try {
+        window.opener.postMessage(message, origin || '*');
+      } catch (e) {
+        try { window.opener.postMessage(message, '*'); } catch (e2) {}
+      }
     }
-    window.addEventListener('message', receive, false);
-    if (window.opener) window.opener.postMessage('authorizing:github', '*');
+
+    // Отвечаем на рукопожатие админки, если оно придёт.
+    window.addEventListener('message', function (event) {
+      sendToOpener(event.origin);
+      setTimeout(function () { window.close(); }, 600);
+    }, false);
+
+    // И отправляем сами — на случай, если рукопожатия не будет.
+    [0, 300, 800, 1500, 3000].forEach(function (delay) {
+      setTimeout(function () { sendToOpener('*'); }, delay);
+    });
   })();
 </script>
 </body>

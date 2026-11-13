@@ -1,0 +1,21 @@
+name: Deploy to Cloudflare Pages
+
+# Cloudflare собирает сайт по deploy hook: проект создан через API, и прямой
+# Git-интеграции у него нет, поэтому push запускает сборку отсюда.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages build
+        env:
+          DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "Секрет DEPLOY_HOOK не задан"; exit 1
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK" -H "Content-Type: application/json" -d '{}'

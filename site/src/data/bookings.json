@@ -1,20 +1,20 @@
 {
   "bookings": [
     {
-      "id": "LY-20261113-63101",
       "house": "house-3",
-      "checkin": "2026-11-16",
       "checkout": "2026-11-22",
       "name": "Виктор",
+      "checkin": "2026-11-16",
       "phone": "+79608867040",
-      "comment": "",
-      "pet": true,
-      "guests": null,
-      "status": "new",
+      "status": "confirmed",
+      "telegramStatus": "отправлено",
       "source": "site",
+      "id": "LY-20261113-63101",
       "createdAt": "2026-11-13T20:18:30.713Z",
+      "guests": null,
+      "pet": true,
       "managerNote": "",
-      "telegramStatus": "отправлено"
+      "comment": ""
     }
   ]
 }

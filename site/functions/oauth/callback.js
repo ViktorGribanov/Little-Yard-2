@@ -31,12 +31,18 @@ export async function onRequestGet({ request, env }) {
   const data = await response.json().catch(() => ({}));
   const payload = JSON.stringify({ token: data.access_token || '', provider: 'github' });
   const successMessage = JSON.stringify(`authorization:github:success:${payload}`);
+  // Диагностика для человека: токен не печатаем, только факт и код ошибки GitHub.
+  const diagnostic = data.access_token
+    ? `Токен получен (${String(data.access_token).length} символов)`
+    : `Токен не получен. GitHub ответил: ${data.error || 'без ошибки'} ${data.error_description || ''}`.trim();
+  const safeDiagnostic = diagnostic.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
   const html = `<!doctype html>
 <html lang="ru">
 <head><meta charset="utf-8"><title>Вход в админку</title></head>
 <body style="font-family:system-ui,sans-serif;padding:2rem">
-<p>Авторизация завершена. Окно закроется само.</p>
+<p id="diag">Авторизация завершена. Окно закроется само.</p>
+<p><small>${safeDiagnostic}</small></p>
 <script>
   (function () {
     var success = ${successMessage};

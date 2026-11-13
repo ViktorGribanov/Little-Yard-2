@@ -20,7 +20,7 @@ local_backend: true
 
 # Медиатека: загруженные фото попадают в public/images/uploads и на сайт
 # отдаются по адресу /images/uploads/<файл>.
-media_folder: public/images/uploads
+media_folder: site/public/images/uploads
 public_folder: /images/uploads
 
 collections:
@@ -30,7 +30,7 @@ collections:
     files:
       - name: bookings
         label: Список заявок
-        file: src/data/bookings.json
+        file: site/src/data/bookings.json
         format: json
         fields:
           - name: bookings
@@ -74,7 +74,7 @@ collections:
     files:
       - name: houses
         label: Список домов
-        file: src/data/houses.json
+        file: site/src/data/houses.json
         format: json
         fields:
           - name: houses
@@ -147,7 +147,7 @@ collections:
     files:
       - name: settings
         label: Настройки сайта
-        file: src/data/site.json
+        file: site/src/data/site.json
         format: json
         fields:
           - { name: brand, label: Название бренда, widget: string }
@@ -241,7 +241,7 @@ collections:
     files:
       - name: sections
         label: Секции
-        file: src/data/sections.json
+        file: site/src/data/sections.json
         format: json
         fields:
           - name: intro
@@ -402,7 +402,7 @@ collections:
     files:
       - name: faq
         label: FAQ
-        file: src/data/faq.json
+        file: site/src/data/faq.json
         format: json
         fields:
           - { name: title, label: Заголовок блока, widget: string }

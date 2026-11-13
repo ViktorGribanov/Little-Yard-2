@@ -52,7 +52,7 @@ collections:
               - { name: checkout, label: Выезд, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
               - { name: name, label: Гость, widget: string }
               - { name: phone, label: Телефон, widget: string }
-              - { name: guests, label: Гостей, widget: number, value_type: int, required: false, min: 1, max: 8 }
+              - { name: guests, label: Гостей, widget: number, value_type: int, required: false }
               - { name: pet, label: С питомцем, widget: boolean, required: false, default: false }
               - { name: comment, label: Комментарий гостя, widget: text, required: false }
               - name: status

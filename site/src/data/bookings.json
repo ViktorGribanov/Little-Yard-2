@@ -150,6 +150,22 @@
       "createdAt": "2026-11-12T20:39:58.941Z",
       "managerNote": "",
       "telegramStatus": "отправлено"
+    },
+    {
+      "id": "LY-20261113-59501",
+      "house": "house-3",
+      "checkin": "2026-12-06",
+      "checkout": "2026-12-08",
+      "name": "Kamila",
+      "phone": "78945674321",
+      "comment": "",
+      "pet": true,
+      "guests": null,
+      "status": "new",
+      "source": "site",
+      "createdAt": "2026-11-13T17:22:53.082Z",
+      "managerNote": "",
+      "telegramStatus": "отправлено"
     }
   ]
 }

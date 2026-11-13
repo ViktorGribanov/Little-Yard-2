@@ -140,6 +140,11 @@
     function render(){
       var house = currentHouse();
       if(!house) return;
+      // В заголовке показываем дом: календарь у каждого дома свой, и без подписи
+      // легко решить, что заявка «не отразилась».
+      var houseLabel = document.getElementById("calendarHouse");
+      if(houseLabel) houseLabel.textContent = " · " + house.name;
+
       var availability = availabilityFor(house.slug);
       monthsEl.innerHTML = "";
       monthsEl.appendChild(buildMonth(cursor, availability));

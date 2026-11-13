@@ -1,11 +1,10 @@
 // /oauth/callback — обмен кода GitHub на токен и передача его админке.
 //
-// Протокол Decap (см. handshakeCallback в decap-cms-lib-auth):
-//   1. окно шлёт админке "authorizing:github";
-//   2. админка отвечает тем же сообщением;
-//   3. окно отвечает "authorization:github:success:{token,provider}".
-// Первый шаг обязателен: без него админка не регистрирует обработчик токена.
-// Поэтому рукопожатие повторяется, пока не придёт ответ.
+// Основной канал — postMessage (протокол Decap: authorizing:github → успех).
+// Но после перехода через GitHub окно может потерять родителя (window.opener
+// бывает null), и тогда сообщение уходит в пустоту. Поэтому токен кладётся ещё
+// и в localStorage того же домена: вкладка админки получает его событием
+// storage и завершает вход сама.
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
@@ -29,11 +28,13 @@ export async function onRequestGet({ request, env }) {
   });
 
   const data = await response.json().catch(() => ({}));
-  const payload = JSON.stringify({ token: data.access_token || '', provider: 'github' });
+  const token = data.access_token || '';
+  const payload = JSON.stringify({ token, provider: 'github' });
   const successMessage = JSON.stringify(`authorization:github:success:${payload}`);
-  // Диагностика для человека: токен не печатаем, только факт и код ошибки GitHub.
-  const diagnostic = data.access_token
-    ? `Токен получен (${String(data.access_token).length} символов)`
+  const stored = JSON.stringify({ token, ts: Date.now() });
+
+  const diagnostic = token
+    ? `Токен получен (${token.length} символов)`
     : `Токен не получен. GitHub ответил: ${data.error || 'без ошибки'} ${data.error_description || ''}`.trim();
   const safeDiagnostic = diagnostic.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
@@ -41,45 +42,41 @@ export async function onRequestGet({ request, env }) {
 <html lang="ru">
 <head><meta charset="utf-8"><title>Вход в админку</title></head>
 <body style="font-family:system-ui,sans-serif;padding:2rem">
-<p id="diag">Авторизация завершена. Окно закроется само.</p>
+<p>Авторизация завершена. Вернитесь во вкладку с админкой — она должна открыться сама.</p>
 <p><small>${safeDiagnostic}</small></p>
 <script>
   (function () {
+    var token = ${JSON.stringify(token)};
     var success = ${successMessage};
-    var done = false;
-    var timer = null;
 
-    function handshake() {
-      if (done || !window.opener) return;
-      try { window.opener.postMessage('authorizing:github', '*'); } catch (e) {}
+    // Канал 1: общее хранилище домена — работает, даже если окна потеряли связь.
+    try {
+      if (token) localStorage.setItem('little-yard-oauth', ${stored});
+    } catch (e) {}
+
+    function closeSelf() {
+      try { window.close(); } catch (e) {}
     }
 
-    // Повторяем рукопожатие, пока админка не ответит.
-    timer = setInterval(handshake, 400);
-    handshake();
+    // Канал 2: классическое рукопожатие Decap, если родитель доступен.
+    if (window.opener) {
+      var timer = setInterval(function () {
+        try { window.opener.postMessage('authorizing:github', '*'); } catch (e) {}
+      }, 400);
 
-    window.addEventListener('message', function (event) {
-      if (done || !window.opener) return;
-      if (event.data !== 'authorizing:github') return;
+      window.addEventListener('message', function (event) {
+        if (event.data !== 'authorizing:github') return;
+        clearInterval(timer);
+        try { window.opener.postMessage(success, event.origin || '*'); } catch (e) {}
+        setTimeout(closeSelf, 400);
+      }, false);
 
-      done = true;
-      if (timer) clearInterval(timer);
-      try {
-        window.opener.postMessage(success, event.origin || '*');
-      } catch (e) {
-        try { window.opener.postMessage(success, '*'); } catch (e2) {}
-      }
-      setTimeout(function () { window.close(); }, 500);
-    }, false);
-
-    // Страховка: если ответа нет, всё равно отдаём токен и закрываемся.
-    setTimeout(function () {
-      if (done || !window.opener) return;
-      done = true;
-      if (timer) clearInterval(timer);
-      try { window.opener.postMessage(success, '*'); } catch (e) {}
-      setTimeout(function () { window.close(); }, 500);
-    }, 6000);
+      setTimeout(function () {
+        clearInterval(timer);
+        try { window.opener.postMessage(success, '*'); } catch (e) {}
+        setTimeout(closeSelf, 400);
+      }, 4000);
+    }
   })();
 </script>
 </body>

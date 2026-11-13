@@ -14,5 +14,61 @@
   </head>
   <body>
     <script is:inline src="https://unpkg.com/decap-cms@^3.6.0/dist/decap-cms.js"></script>
+
+    <!--
+      Мост авторизации. Окно /oauth/callback кладёт токен в localStorage этого же
+      домена: после перехода через GitHub окно теряет связь с админкой, и обычное
+      postMessage-рукопожатие Decap не срабатывает. Здесь мы забираем токен и
+      доигрываем рукопожатие внутри страницы: сначала "authorizing:github",
+      затем сообщение с токеном — ровно то, что ждёт Decap.
+    -->
+    <script is:inline>
+      (function () {
+        var KEY = 'little-yard-oauth';
+        var MAX_AGE = 2 * 60 * 1000;
+
+        function deliver(rawValue) {
+          var data;
+          try {
+            data = JSON.parse(rawValue);
+          } catch (e) {
+            return;
+          }
+          if (!data || !data.token) return;
+          if (Date.now() - Number(data.ts || 0) > MAX_AGE) return;
+
+          var payload = JSON.stringify({ token: data.token, provider: 'github' });
+          var message = 'authorization:github:success:' + payload;
+          var origin = window.location.origin;
+
+          // Decap слушает window и регистрирует обработчик токена только после
+          // рукопожатия, поэтому пару «рукопожатие + токен» повторяем несколько раз.
+          [0, 400, 1200, 2500].forEach(function (delay) {
+            setTimeout(function () {
+              window.postMessage('authorizing:github', origin);
+              setTimeout(function () {
+                window.postMessage(message, origin);
+              }, 60);
+            }, delay);
+          });
+        }
+
+        window.addEventListener('storage', function (event) {
+          if (event.key !== KEY || !event.newValue) return;
+          try {
+            localStorage.removeItem(KEY);
+          } catch (e) {}
+          deliver(event.newValue);
+        });
+
+        try {
+          var pending = localStorage.getItem(KEY);
+          if (pending) {
+            localStorage.removeItem(KEY);
+            deliver(pending);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </body>
 </html>
